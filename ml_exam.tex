@@ -29,9 +29,11 @@
 
 \maketitle
 
+\tableofcontents
+
 % Start writing your notes here
 \part{Lecture 1}
-\section*{Q1.1 Train/Test Data Separation and Generalization [10]}
+\section{Q1.1 Train/Test Data Separation and Generalization [10]}
 
 \textbf{Why Separate Train and Test Data:}
 \begin{itemize}
@@ -54,7 +56,7 @@
 
 
 
-\section*{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss. [10]}
+\section{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss. [10]}
 
 \textbf{Prediction Function:}
 Given an input vector \( x \in \mathbb{R}^D \), the prediction function \( f \) for linear regression is defined as:
@@ -71,7 +73,7 @@ L(w, b) = \frac{1}{2N} \sum_{i=1}^{N} (f(x_i; w) - t_i)^2 + \lambda \| w \|^2
 where \( t_i \) is the true target value for the \( i \)-th sample, \( \lambda \) is the regularization parameter, and \( \| w \|^2 \) denotes the \( L_2 \) norm of the weight vector, which is the sum of the squares of its components.
 
 
-\section*{Q1.3 Starting from unregularized sum of squares error of a linear regression model, show how the explicit solution can be obtained, assuming \(X^TX\) is regular}
+\section{Q1.3 Starting from unregularized sum of squares error of a linear regression model, show how the explicit solution can be obtained, assuming \(X^TX\) is regular}
 
 In order to find a minimum of \( \frac{1}{2} \sum_{i=1}^{N} (x_i^T w - t_i)^2 \), we can inspect values where the derivative of the error function is zero, with respect to all weights \( w_j \).
 
@@ -92,7 +94,7 @@ w = (X^TX)^{-1}X^Tt.
 \]
 
 \part{Lecture 2}
-\section*{Q2.1 Describe standard gradient descent and compare it to stochastic (i.e., online) gradient descent and minibatch stochastic gradient descent}
+\section{Q2.1 Describe standard gradient descent and compare it to stochastic (i.e., online) gradient descent and minibatch stochastic gradient descent}
 
 \textbf{Standard gradient descent}, also known as batch gradient descent, computes the gradient of the cost function with respect to the parameters (\( w \)) for the entire training dataset:
 \[
@@ -112,7 +114,7 @@ This method is noisier but can converge faster for large datasets.
 \]
 This approach aims to balance the computational efficiency of standard gradient descent with the faster convergence of SGD.
 
-\section*{Q2.2 Write an \( L_2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas of the loss function and its gradient}
+\section{Q2.2 Write an \( L_2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas of the loss function and its gradient}
 The loss function for \( L_2 \)-regularized linear regression is given by:
 \[
 E(w) = \frac{1}{2} \mathbb{E}_{(x,t)\sim p_{\text{data}}} [(x^T w - t)^2] + \frac{\lambda}{2} \|w\|^2
@@ -126,7 +128,7 @@ The gradient of the loss function with respect to the weights is:
 where \( \mathcal{B} \) is a minibatch of examples.
 
 \begin{algorithm}
-\section*{Pseudocode of the minibatch SGD algorithm}
+\subsection*{Pseudocode of the minibatch SGD algorithm}
 \begin{algorithmic}[1]
 \Require Dataset \( \{X \in \mathbb{R}^{N \times D}, t \in \mathbb{R}^N\} \), learning rate \( \alpha \in \mathbb{R}_+ \), \( L_2 \) strength \( \lambda \in \mathbb{R} \)
 \Ensure Weights \( w \in \mathbb{R}^D \) minimizing the regularized MSE of a linear regression model.
@@ -140,7 +142,7 @@ where \( \mathcal{B} \) is a minibatch of examples.
 \end{algorithm}
 
 
-\section*{Q2.3 Does the SGD algorithm for linear regression always find the best solution on the training data? If yes, explain under what conditions it happens, if not explain why it is not guaranteed to converge}
+\section{Q2.3 Does the SGD algorithm for linear regression always find the best solution on the training data? If yes, explain under what conditions it happens, if not explain why it is not guaranteed to converge}
 
 Stochastic Gradient Descent (SGD) for linear regression does not always guarantee finding the best solution on the training data. It converges to the global optimum if the following conditions are met:
 
@@ -157,7 +159,7 @@ Stochastic Gradient Descent (SGD) for linear regression does not always guarante
 
 When these conditions are satisfied, SGD converges to the unique optimum of convex problems. However, for non-convex loss functions, SGD is not guaranteed to find the global minimum; it may converge to a local minimum instead. The noise in the gradient estimation due to the stochastic nature of the algorithm can also affect convergence. Thus, while SGD can perform well in practice, especially for large datasets, it doesn't always find the best solution due to these factors.
 
-\section*{Q2.4 After training a model with SGD, you ended up with a low training error and a high test error. Using the learning curves, explain what might have happened and what steps you might take to prevent this from happening}
+\section{Q2.4 After training a model with SGD, you ended up with a low training error and a high test error. Using the learning curves, explain what might have happened and what steps you might take to prevent this from happening}
 
 The learning curves might indicate that while the training loss decreases over time, the test loss decreases initially but then starts to increase. This scenario suggests that the \textbf{model is overfitting} to the training data. Overfitting occurs when a model learns the training data too well, including noise and details that do not generalize to unseen data. Consequently, the model performs well on the training data but poorly on the test data.
 
@@ -211,7 +213,7 @@ Additionally, techniques similar to PCA, such as Principal Component Analysis it
 
 \part{Lecture 3}
 
-\section*{Q3.1 Define binary classification, write down the perceptron algorithm and show how a prediction is made for a given example}
+\section{Q3.1 Define binary classification, write down the perceptron algorithm and show how a prediction is made for a given example}
 
 Binary classification is the task of classifying the elements of a given set into two groups based on a classification rule. In binary classification, the output variable can take only two values, typically denoted as 0 and 1, or -1 and 1 in some contexts.
 
@@ -239,7 +241,7 @@ Given a new input \( x \) and trained weights \( w \), the perceptron prediction
 where \( b \) is the bias term of the perceptron. If \( \hat{y} \) is positive, the input is classified into one class, and if it is negative, it is classified into the other class.
 
 
-\section*{Q3.2 Define entropy, cross-entropy, Kullback-Leibler divergence, and prove the Gibbs inequality}
+\section{Q3.2 Define entropy, cross-entropy, Kullback-Leibler divergence, and prove the Gibbs inequality}
 
 Entropy \( H(P) \) for a discrete random variable with probability distribution \( P \) is defined as:
 \[
@@ -274,9 +276,7 @@ H(P) - H(P,Q) &= \sum_x P(x) \log \frac{Q(x)}{P(x)} \\
 since \( \sum_x P(x) = 1 \) and \( \sum_x Q(x) = 1 \). The inequality is strict unless \( P(x) = Q(x) \) for all \( x \), which proves Gibbs Inequality.
 
 
-\end{document}
-
-\section*{Q3.3 Explain the notion of likelihood in maximum likelihood estimation}
+\section{Q3.3 Explain the notion of likelihood in maximum likelihood estimation}
 
 Likelihood in the context of maximum likelihood estimation (MLE) is a function that measures the probability of observing the given data under different parameter values of a statistical model. For a set of independent and identically distributed (i.i.d) data points \( X = \{x_1, x_2, \ldots, x_N\} \), the likelihood of a parameter \( w \) is defined as:
 
@@ -287,5 +287,195 @@ L(w) = \prod_{i=1}^{N} P_{\text{model}}(x_i; w)
 where \( P_{\text{model}}(x_i; w) \) is the probability of observing the specific data point \( x_i \) under the model parameterized by \( w \).
 
 In MLE, we seek the parameter \( w \) that maximizes this likelihood function, which is equivalent to maximizing the probability of observing the given data. While the likelihood itself is not a probability distribution, it serves as a scoring function that indicates how well the model with a particular set of parameters explains the observed data. Maximizing the likelihood function leads to finding the parameter values that make the observed data most probable under the assumed model.
+
+
+\section{Q3.4 Describe maximum likelihood estimation, as minimizing NLL, cross-entropy, and KL divergence}
+
+Let \( X = \{x_1, x_2, \ldots, x_N\} \) be training data drawn independently from the data-generating distribution \( p_{\text{data}} \). We denote the empirical data distribution as \( \hat{p}_{\text{data}} \), where \( \hat{p}_{\text{data}}(x) = \frac{1}{N} \sum_{i=1}^{N} \mathbb{I}[x_i = x] \). Let \( p_{\text{model}}(x; w) \) be a family of distributions.
+
+The maximum likelihood estimation of \( w \) is:
+
+\[
+w_{\text{MLE}} = \arg \max_w p_{\text{model}}(X; w) = \arg \max_w \prod_{i=1}^{N} p_{\text{model}}(x_i; w)
+\]
+
+\[
+= \arg \min_w -\sum_{i=1}^{N} \log p_{\text{model}}(x_i; w)
+\]
+
+\[
+= \arg \min_w \mathbb{E}_{x \sim \hat{p}_{\text{data}}}[- \log p_{\text{model}}(x; w)]
+\]
+
+\[
+= \arg \min_w H(\hat{p}_{\text{data}}(x), p_{\text{model}}(x; w))
+\]
+
+\[
+= \arg \min_w D_{KL}(\hat{p}_{\text{data}}(x) || p_{\text{model}}(x; w)) + H(\hat{p}_{\text{data}}(x))
+\]
+
+For MLE generalized to the conditional case, where the goal is to predict \( t \) given \( x \):
+
+\[
+w_{\text{MLE}} = \arg \max_w p_{\text{model}}(t | x; w) = \arg \max_w \prod_{i=1}^{N} p_{\text{model}}(t_i | x_i; w)
+\]
+
+\[
+= \arg \min_w -\sum_{i=1}^{N} \log p_{\text{model}}(t_i | x_i; w)
+\]
+
+\[
+= \arg \min_w \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[- \log p_{\text{model}}(t | x; w)]
+\]
+
+\[
+= \arg \min_w H(\hat{p}_{\text{data}}(t | x), p_{\text{model}}(t | x; w))
+\]
+
+\[
+= \arg \min_w D_{KL}(\hat{p}_{\text{data}}(t | x) || p_{\text{model}}(t | x; w)) + H(\hat{p}_{\text{data}}(t | x))
+\]
+
+Where \( H(\hat{p}_{\text{data}}) \) is the entropy of the empirical data distribution and \( D_{KL} \) is the Kullback-Leibler divergence. The terms are defined such that the conditional entropy is \( H(\hat{p}_{\text{data}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(\hat{p}_{\text{data}}(t | x))] \) and the conditional cross-entropy is \( H(\hat{p}_{\text{data}}, p_{\text{model}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(p_{\text{model}}(t | x; w))] \). The negative log-likelihood (NLL) is equivalent to cross-entropy or Kullback-Leibler divergence in the context of MLE.
+
+
+\section{Q3.5 Considering binary logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the sigmoid function). Describe how we can interpret the outputs of the linear part of the model as logits}
+
+In a binary logistic regression model, the prediction \( \hat{y} \) is based on the probability that a given input \( x \) belongs to a particular class \( C_1 \), which is modeled using the logistic function \( \sigma \). The parameters of the model include:
+
+\begin{itemize}
+    \item Weight vector \( w \in \mathbb{R}^D \), where \( D \) is the number of features.
+    \item Bias \( b \in \mathbb{R} \).
+\end{itemize}
+
+The logistic regression model makes predictions using the sigmoid function \( \sigma \) applied to the linear combination of the input features and the model weights:
+
+\[
+\sigma(z) = \frac{1}{1 + e^{-z}} = \frac{e^z}{e^z + 1}
+\]
+
+Given an input \( x \), the linear part of the logistic regression model computes \( z \) as:
+
+\[
+z = x^T w + b
+\]
+
+The final prediction \( \hat{y} \) is given by:
+
+\[
+\hat{y}(x; w) = \sigma(z) = \sigma(x^T w + b)
+\]
+
+The output of the linear part \( x^T w + b \) can be interpreted as logits, which are the log odds of the probability that \( x \) belongs to class \( C_1 \) before the sigmoid transformation. Logits can take any real value, and transforming them through the sigmoid function maps them to the \((0, 1)\) interval, representing probabilities.
+
+\section{Q3.6 Write down an L2-regularized minibatch SGD algorithm for training a binary logistic regression model, including the explicit formulas of the loss function and its gradient}
+
+To train the logistic regression, we use MLE (maximum likelihood estimation). The loss for a minibatch $\mathcal{X} = \{(\vec{x}_1, t_1), (\vec{x}_2, t_2), \ldots, (\vec{x}_N, t_N)\}$ is given by
+$$
+E({w}) = \frac{1}{N} \sum_{i} -\log(p(C_{t_i} | {x}_i; {w})) + \frac{\lambda}{2} \| {w} \|^2
+$$
+The logistic regression model uses the sigmoid function as the activation function, which is defined as
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}}.
+$$
+The parameters are updated using the SGD algorithm as follows:
+\begin{enumerate}
+  \item Initialize the weight vector $\vec{w} \leftarrow \vec{0}$ or randomly.
+  \item Repeat until convergence:
+  \begin{itemize}
+    \item Compute the gradient for a minibatch $\mathcal{B}$:
+    $$
+    \vec{g} \leftarrow \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \nabla_{\vec{w}} \left(-\log(p(C_{t_i} | \vec{x}_i; \vec{w}))\right) + \lambda \vec{w}
+    $$
+    \item Update the weights:
+    $$
+    \vec{w} \leftarrow \vec{w} - \alpha \vec{g}
+    $$
+  \end{itemize}
+\end{enumerate}
+
+\subsection*{Logistic Regression Gradient}
+Consider the log-likelihood of logistic regression $\log p(t|\vec{x}; \vec{w})$. For brevity, we denote $\bar{y}(\vec{x}; \vec{w}) = \vec{x}^T \vec{w}$ simply as $\bar{y}$ in the following computation.
+
+Given that for $t \sim \text{Ber}(\phi)$ we have $p(t) = \phi^t (1-\phi)^{1-t}$, we can rewrite the log-likelihood as:
+
+\[
+\log p(t|\vec{x}; \vec{w}) = \log \sigma(\bar{y})^t (1 - \sigma(\bar{y}))^{1-t}
+\]
+
+This simplifies to:
+
+\[
+t \cdot \log (\sigma(\bar{y})) + (1 - t) \cdot \log (1 - \sigma(\bar{y}))
+\]
+
+The gradient of the logistic regression's likelihood with respect to the weights $\vec{w}$ is derived as follows:
+\begin{align*}
+\nabla_{\vec{w}} -\log p(t|\vec{x}; \vec{w}) &= \nabla_{\vec{w}} \left( -t \log (\sigma(\hat{y})) - (1-t) \log (1 - \sigma(\hat{y})) \right) \\
+&= \nabla_{\vec{w}} \left( -t \log (\sigma(\vec{x}^T \vec{w})) - (1-t) \log (1 - \sigma(\vec{x}^T \vec{w})) \right) \\
+&= -t \cdot \frac{1}{\sigma(\hat{y})} \cdot \nabla_{\vec{w}} \sigma(\hat{y}) + (1-t) \cdot \frac{1}{1 - \sigma(\hat{y})} \cdot \nabla_{\vec{w}} (-\sigma(\hat{y})) \\
+&= \left( -t + t \sigma(\hat{y}) + \sigma(\hat{y}) - t \sigma(\hat{y}) \right) \vec{x} \\
+&= \left( \sigma(\vec{x}^T \vec{w}) - t \right) \vec{x}
+\end{align*}
+where $\hat{y} = \vec{x}^T \vec{w}$ and the gradient of the sigmoid function $\sigma(x)$ is $\sigma(x)(1 - \sigma(x))$. The resulting gradient is used to update the weights in the SGD algorithm.
+
+Therefor the gradient of the loss function is:
+\[
+\nabla_{\vec{w}} E(\vec{w}) = \frac{1}{N} \sum_{i} \left( \sigma(\vec{x}_i^T \vec{w}) - t_i \right) \vec{x}_i + \lambda \vec{w}
+\]
+
+
+\part{Lecture 4}
+\section{Q4.1 Define mean squared error and show how it can be derived using MLE}
+
+Mean Squared Error (MSE) is commonly used as a loss function for regression problems and can be derived from Maximum Likelihood Estimation (MLE) when we assume that the target variables, \( t \), conditioned on the inputs, \( \vec{x} \), are normally distributed with a mean equal to the output of the model, \( y(\vec{x}; \vec{w}) \), and variance \( \sigma^2 \). Under this assumption, the probability distribution for \( t \) is given by \( p(t|\vec{x}; \vec{w}) = \mathcal{N}(t; y(\vec{x}; \vec{w}), \sigma^2) \).
+
+Applying MLE, we look for the parameters \( \vec{w} \) that maximize the likelihood of the observed data, which is equivalent to minimizing the negative log-likelihood. This leads to the MSE as follows:
+
+\[
+\begin{aligned}
+\vec{w}_{\text{MLE}} &= \arg \max_{\vec{w}} p(\vec{t}|\vec{X}; \vec{w}) = \arg \min_{\vec{w}} \sum_{i=1}^{N} -\log p(t_i|\vec{x}_i; \vec{w}) \\
+&= \arg \min_{\vec{w}} -\sum_{i=1}^{N} \log \left(\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(t_i - y(\vec{x}_i; \vec{w}))^2}{2\sigma^2}\right)\right) \\
+&= \arg \min_{\vec{w}} -N \log \left((2\pi\sigma^2)^{-\frac{1}{2}}\right) - \sum_{i=1}^{N} \frac{(t_i - y(\vec{x}_i; \vec{w}))^2}{2\sigma^2} \\
+&= \arg \min_{\vec{w}} \frac{1}{2\sigma^2} \sum_{i=1}^{N} (y(\vec{x}_i; \vec{w}) - t_i)^2.
+\end{aligned}
+\]
+
+Ignoring the constant \( \frac{1}{2\sigma^2} \), we obtain the familiar form of the MSE:
+
+\[
+E(\vec{w}) = \frac{1}{N} \sum_{i=1}^{N} (y(\vec{x}_i; \vec{w}) - t_i)^2.
+\]
+
+This derivation shows that when we assume a normal distribution for the model errors, the MLE approach naturally leads to the MSE as the loss function to be minimized.
+
+
+\section{Q4.2 Considering KK-class logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the softmax function). Describe how we can interpret the outputs of the linear part of the model as logits}
+
+To extend the binary logistic regression to a \( K \)-class case, we define the model parameters as a weight matrix \( W \in \mathbb{R}^{D \times K} \), where \( D \) is the number of features and \( K \) is the number of classes. Each column \( W_{*,i} \) corresponds to the weights associated with class \( i \).
+
+Predictions are made using the softmax function applied to the linear outputs, known as logits. For an input vector \( \vec{x} \), the logits are given by \( \vec{y}(\vec{x}; W) = W^T\vec{x} \), and the softmax function is defined as:
+\[
+\text{softmax}(\vec{z})_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}
+\]
+for each class \( i \), where \( \vec{z} \) is the vector of logits. 
+
+Therefore, the probability that \( \vec{x} \) belongs to class \( i \) is:
+\[
+p(C_i | \vec{x}; W) = \text{softmax}(\vec{y}(\vec{x}; W))_i = \frac{e^{\vec{x}^TW_{*,i}}}{\sum_{j=1}^{K} e^{\vec{x}^TW_{*,j}}}
+\]
+
+The linear part of the model \( \vec{x}^TW \) can be interpreted as logits because they represent the log odds before passing through the softmax function. The softmax function normalizes these log odds to probabilities that sum to one across all classes.
+
+Training a \( K \)-class logistic regression model typically involves using the cross-entropy loss function, which for a given data point \( (x_i, t_i) \) is:
+\[
+E(W) = -\sum_{i=1}^{N} \log p(C_{t_i} | \vec{x}_i; W)
+\]
+
+This loss function is minimized using optimization algorithms such as minibatch stochastic gradient descent (SGD).
+
+
+\end{document}
 
 
