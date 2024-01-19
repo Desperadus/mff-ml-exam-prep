@@ -1,0 +1,291 @@
+\documentclass[11pt]{article}
+
+% Basic packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% For figures and images
+\usepackage{graphicx}
+
+% For better formatting
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\setlist[itemize]{itemsep=0pt, parsep=0pt}
+
+% For adding links
+\usepackage{hyperref}
+
+\title{Machine Learning Exam Notes}
+\author{Tomáš Jelínek}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% Start writing your notes here
+\part{Lecture 1}
+\section*{Q1.1 Train/Test Data Separation and Generalization [10]}
+
+\textbf{Why Separate Train and Test Data:}
+\begin{itemize}
+    \item To evaluate the performance of a machine learning model reliably.
+    \item Training data is used to fit the model, while test data assesses its performance on unseen data.
+    \item Prevents overfitting, ensuring the model generalizes well to new, unseen data.
+\end{itemize}
+
+\textbf{Generalization:}
+\begin{itemize}
+    \item The ability of a model to perform well on new, unseen data.
+    \item Indicates how well the model learns the underlying patterns, not just memorizing the training data.
+\end{itemize}
+
+\textbf{Relation to Underfitting and Overfitting:}
+\begin{itemize}
+    \item \textbf{Underfitting:} Model is too simple, fails to capture underlying patterns in data, leading to poor performance on both training and test data.
+    \item \textbf{Overfitting:} Model is too complex, captures noise along with patterns in the training data, leading to poor generalization on test data.
+\end{itemize}
+
+
+
+\section*{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss. [10]}
+
+\textbf{Prediction Function:}
+Given an input vector \( x \in \mathbb{R}^D \), the prediction function \( f \) for linear regression is defined as:
+\[
+f(x; w, b) = w^T x + b
+\]
+where \( w \) is the weight vector, \( b \) is the bias term, and \( T \) denotes the transpose of \( w \).
+
+\textbf{\( L_2 \)-Regularized Mean Squared Error Loss:}
+The \( L_2 \)-regularized mean squared error loss (also known as Ridge Regression) for a dataset with \( N \) samples is defined as:
+\[
+L(w, b) = \frac{1}{2N} \sum_{i=1}^{N} (f(x_i; w) - t_i)^2 + \lambda \| w \|^2
+\]
+where \( t_i \) is the true target value for the \( i \)-th sample, \( \lambda \) is the regularization parameter, and \( \| w \|^2 \) denotes the \( L_2 \) norm of the weight vector, which is the sum of the squares of its components.
+
+
+\section*{Q1.3 Starting from unregularized sum of squares error of a linear regression model, show how the explicit solution can be obtained, assuming \(X^TX\) is regular}
+
+In order to find a minimum of \( \frac{1}{2} \sum_{i=1}^{N} (x_i^T w - t_i)^2 \), we can inspect values where the derivative of the error function is zero, with respect to all weights \( w_j \).
+
+\[
+\frac{\partial}{\partial w_j} \frac{1}{2} \sum_{i=1}^{N} (x_i^T w - t_i)^2 = \frac{1}{2} \sum_{i=1}^{N} 2(x_i^T w - t_i)x_{ij} = \sum_{i=1}^{N} x_{ij}(x_i^T w - t_i)
+\]
+
+Therefore, we want for all \( j \) that \( \sum_{i=1}^{N} x_{ij}(x_i^T w - t_i) = 0 \). We can rewrite the explicit sum into \( X_{*,j}^T (Xw - t) = 0 \), then write the equations for all \( j \) together using matrix notation as \( X^T(Xw - t) = 0 \), and finally, rewrite to
+
+\[
+X^TXw = X^Tt.
+\]
+
+The matrix \( X^TX \) is of size \( D \times D \). If it is regular, we can compute its inverse and therefore
+
+\[
+w = (X^TX)^{-1}X^Tt.
+\]
+
+\part{Lecture 2}
+\section*{Q2.1 Describe standard gradient descent and compare it to stochastic (i.e., online) gradient descent and minibatch stochastic gradient descent}
+
+\textbf{Standard gradient descent}, also known as batch gradient descent, computes the gradient of the cost function with respect to the parameters (\( w \)) for the entire training dataset:
+\[
+w \leftarrow w - \alpha \nabla_w E(w)
+\]
+where \( \alpha \) is the learning rate.
+
+\textbf{Stochastic Gradient Descent (SGD)}, or online gradient descent, on the other hand, updates the parameters for each training example:
+\[
+\nabla_w E(w) \approx \nabla_w L(y(x_i; w), t_i)
+\]
+This method is noisier but can converge faster for large datasets.
+
+\textbf{Minibatch SGD} is a compromise between the two, updating the parameters for a small subset of the training data:
+\[
+\nabla_w E(w) \approx \frac{1}{B} \sum_{i=1}^{B} \nabla_w L(y(x_i; w), t_i)
+\]
+This approach aims to balance the computational efficiency of standard gradient descent with the faster convergence of SGD.
+
+\section*{Q2.2 Write an \( L_2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas of the loss function and its gradient}
+The loss function for \( L_2 \)-regularized linear regression is given by:
+\[
+E(w) = \frac{1}{2} \mathbb{E}_{(x,t)\sim p_{\text{data}}} [(x^T w - t)^2] + \frac{\lambda}{2} \|w\|^2
+\]
+where \( w \) are the weights, \( x \) is the input, \( t \) is the target, and \( \lambda \) is the regularization parameter.
+
+The gradient of the loss function with respect to the weights is:
+\[
+\nabla_w E(w) \approx \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} ((x_i^T w - t_i)x_i) + \lambda w
+\]
+where \( \mathcal{B} \) is a minibatch of examples.
+
+\begin{algorithm}
+\section*{Pseudocode of the minibatch SGD algorithm}
+\begin{algorithmic}[1]
+\Require Dataset \( \{X \in \mathbb{R}^{N \times D}, t \in \mathbb{R}^N\} \), learning rate \( \alpha \in \mathbb{R}_+ \), \( L_2 \) strength \( \lambda \in \mathbb{R} \)
+\Ensure Weights \( w \in \mathbb{R}^D \) minimizing the regularized MSE of a linear regression model.
+\State Initialize \( w \) randomly
+\Repeat
+    \State Sample a minibatch \( \mathcal{B} \) of examples with indices \( \mathcal{B} \)
+    \State Compute gradient \( g \) according to \( \nabla_w E(w) \) using \( \mathcal{B} \)
+    \State Update \( w \): \( w \leftarrow w - \alpha \cdot g \)
+\Until{convergence or maximum number of iterations is reached}
+\end{algorithmic}
+\end{algorithm}
+
+
+\section*{Q2.3 Does the SGD algorithm for linear regression always find the best solution on the training data? If yes, explain under what conditions it happens, if not explain why it is not guaranteed to converge}
+
+Stochastic Gradient Descent (SGD) for linear regression does not always guarantee finding the best solution on the training data. It converges to the global optimum if the following conditions are met:
+
+\begin{itemize}
+    \item The loss function is convex and continuous.
+    \item The learning rate \( \alpha_i \) meets the Robbins-Monro conditions, which are:
+    \begin{itemize}
+        \item \( \alpha_i > 0 \)
+        \item \( \sum_{i=1}^{\infty} \alpha_i = \infty \)
+        \item \( \sum_{i=1}^{\infty} \alpha_i^2 < \infty \)
+    \end{itemize}
+    \item The third condition ensures that \( \alpha_i \rightarrow 0 \) as \( i \rightarrow \infty \).
+\end{itemize}
+
+When these conditions are satisfied, SGD converges to the unique optimum of convex problems. However, for non-convex loss functions, SGD is not guaranteed to find the global minimum; it may converge to a local minimum instead. The noise in the gradient estimation due to the stochastic nature of the algorithm can also affect convergence. Thus, while SGD can perform well in practice, especially for large datasets, it doesn't always find the best solution due to these factors.
+
+\section*{Q2.4 After training a model with SGD, you ended up with a low training error and a high test error. Using the learning curves, explain what might have happened and what steps you might take to prevent this from happening}
+
+The learning curves might indicate that while the training loss decreases over time, the test loss decreases initially but then starts to increase. This scenario suggests that the \textbf{model is overfitting} to the training data. Overfitting occurs when a model learns the training data too well, including noise and details that do not generalize to unseen data. Consequently, the model performs well on the training data but poorly on the test data.
+
+To prevent overfitting, you can take the following steps:
+\begin{enumerate}
+    \item Use regularization techniques such as \( L_1 \) (LASSO) or \( L_2 \) (Ridge) to penalize large weights in the model.
+    \item Implement early stopping based on validation performance to halt training before overfitting occurs.
+    \item Increase the size of the training set if possible, to provide the model with more generalizable examples.
+    \item Simplify the model by reducing its complexity to prevent it from capturing noise in the data. (Make less features, use less layers, etc.)
+\end{enumerate}
+
+These methods can help in guiding the model to generalize better to unseen data and thus improve its test performance.
+
+Another reason might be that the model \textbf{failed to converge}. In this case, you can try to increase the number of iterations or decrease the learning rate to improve convergence.
+
+\section*{Q2.5 You were provided with a fixed training set and a fixed test set and you are supposed to report model performance on that test set. You need to decide what hyperparameters to use. How will you proceed and why?}
+
+To determine the best hyperparameters for a model given a fixed training and test set, the following procedure should be employed:
+
+\begin{enumerate}
+    \item \textbf{Split the training set:} Divide the training set into a smaller training set and a validation set.
+    \item \textbf{Hyperparameter tuning:} Use the smaller training set to train different models with various hyperparameter configurations. (Grid Search, Random Search, Hyperband, SMAC, etc.)
+    \item \textbf{Validation:} Evaluate the performance of each model on the validation set.
+    \item \textbf{Selection:} Choose the hyperparameters that yield the best performance on the validation set.
+    \item \textbf{Final Model:} Train a new model on the full training set using the selected hyperparameters.
+    \item \textbf{Testing:} Report the model's performance on the fixed test set.
+\end{enumerate}
+
+This procedure is crucial because it helps to estimate the model's performance on unseen data and prevents overfitting to the training set. The validation set acts as a proxy for the test set, allowing for an unbiased evaluation of hyperparameter choices.
+
+\section*{Q2.6 What method can be used for normalizing feature values? Explain why it is useful}
+
+Feature normalization can be achieved through methods such as Min-Max normalization and Z-score standardization. These methods are useful for several reasons:
+
+\begin{itemize}
+    \item \textbf{Min-Max Normalization:} Scales the features to a fixed range, typically [0, 1]. It is given by the formula:
+    \[
+    x'_{i,j} = \frac{x_{i,j} - \min_k x_{k,j}}{\max_k x_{k,j} - \min_k x_{k,j}}
+    \]
+    This method is beneficial when we need to bound our features within a specific scale without distorting differences in the ranges of values.
+    
+    \item \textbf{Z-score Standardization:} Transforms the features to have a mean of zero and a standard deviation of one. The formula is:
+    \[
+    x'_{i,j} = \frac{x_{i,j} - \bar{x}_j}{\sigma_j}
+    \]
+    This is particularly useful in optimization algorithms that require features on a comparable scale for efficient learning.
+\end{itemize}
+
+Additionally, techniques similar to PCA, such as Principal Component Analysis itself, can be used for feature scaling and reduction. PCA transforms the data into a new coordinate system, reducing dimensionality and potentially improving model performance by removing noise and redundancy in the data.
+
+
+\part{Lecture 3}
+
+\section*{Q3.1 Define binary classification, write down the perceptron algorithm and show how a prediction is made for a given example}
+
+Binary classification is the task of classifying the elements of a given set into two groups based on a classification rule. In binary classification, the output variable can take only two values, typically denoted as 0 and 1, or -1 and 1 in some contexts.
+
+The perceptron algorithm is a binary classifier that linearly separates these two classes. The algorithm iteratively adjusts the weights based on the training data. Given a set of features \( x \) and a target \( t \), the perceptron rule updates the weights \( w \) as follows:
+
+\begin{algorithmic}
+\If {\( t_i (x_{i}^T w) \leq 0 \)}
+    \State \( w \gets w + t_i x_i \)
+\EndIf
+\end{algorithmic}
+
+To make a prediction \( \hat{y} \) for a new example with feature vector \( x \), the perceptron uses the sign of the dot product between the features and weights:
+
+\[
+\hat{y} = \text{sign}(x^T w)
+\]
+
+where \( \text{sign} \) is an activation function that maps positive values to +1 and non-positive values to -1.
+
+\subsection*{Prediction Example}
+Given a new input \( x \) and trained weights \( w \), the perceptron prediction is computed as:
+\[
+\hat{y} = \text{sign}(x^T w + b)
+\]
+where \( b \) is the bias term of the perceptron. If \( \hat{y} \) is positive, the input is classified into one class, and if it is negative, it is classified into the other class.
+
+
+\section*{Q3.2 Define entropy, cross-entropy, Kullback-Leibler divergence, and prove the Gibbs inequality}
+
+Entropy \( H(P) \) for a discrete random variable with probability distribution \( P \) is defined as:
+\[
+H(P) = - \sum_x P(x) \log P(x)
+\]
+It measures the expected level of 'surprise' or uncertainty inherent in the variable's possible outcomes.
+
+Cross-entropy \( H(P, Q) \) between two discrete probability distributions \( P \) and \( Q \) is defined as:
+\[
+H(P, Q) = - \sum_x P(x) \log Q(x)
+\]
+It measures the expected number of bits (if the log is in base 2) required to identify an event from a set of possibilities if a wrong distribution \( Q \) is used instead of the true distribution \( P \).
+
+Kullback-Leibler divergence \( D_{KL}(P||Q) \) from \( Q \) to \( P \) is defined as:
+\[
+D_{KL}(P||Q) = H(P, Q) - H(P) = \sum_x P(x) \log \frac{P(x)}{Q(x)}
+\]
+It measures how one probability distribution diverges from a second, expected probability distribution.
+
+\textbf{Proof of Gibbs Inequality:}
+We want to prove that \( D_{KL}(P||Q) \geq 0 \), with equality if and only if \( P = Q \).
+
+Using the log sum inequality \( \log \frac{a}{b} \leq \frac{a}{b} - 1 \) with equality only if \( a = b \), we have:
+
+\begin{align*}
+H(P) - H(P,Q) &= \sum_x P(x) \log \frac{Q(x)}{P(x)} \\
+&\leq \sum_x P(x) \left( \frac{Q(x)}{P(x)} - 1 \right) \\
+&= \sum_x Q(x) - \sum_x P(x) \\
+&= 0
+\end{align*}
+
+since \( \sum_x P(x) = 1 \) and \( \sum_x Q(x) = 1 \). The inequality is strict unless \( P(x) = Q(x) \) for all \( x \), which proves Gibbs Inequality.
+
+
+\end{document}
+
+\section*{Q3.3 Explain the notion of likelihood in maximum likelihood estimation}
+
+Likelihood in the context of maximum likelihood estimation (MLE) is a function that measures the probability of observing the given data under different parameter values of a statistical model. For a set of independent and identically distributed (i.i.d) data points \( X = \{x_1, x_2, \ldots, x_N\} \), the likelihood of a parameter \( w \) is defined as:
+
+\[
+L(w) = \prod_{i=1}^{N} P_{\text{model}}(x_i; w)
+\]
+
+where \( P_{\text{model}}(x_i; w) \) is the probability of observing the specific data point \( x_i \) under the model parameterized by \( w \).
+
+In MLE, we seek the parameter \( w \) that maximizes this likelihood function, which is equivalent to maximizing the probability of observing the given data. While the likelihood itself is not a probability distribution, it serves as a scoring function that indicates how well the model with a particular set of parameters explains the observed data. Maximizing the likelihood function leads to finding the parameter values that make the observed data most probable under the assumed model.
+
+
