@@ -31,9 +31,15 @@
 
 \tableofcontents
 
+\newpage
+
+\section{Disclaimer}
+These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2324-winter#home}{Introduction to Machine Learning with Python} in winter semester 2023/24 which is under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
+Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were used in the proccess of writing this document.
+
 % Start writing your notes here
 \part{Lecture 1}
-\section{Q1.1 Train/Test Data Separation and Generalization [10]}
+\section{Q1.1 Train/Test Data Separation and Generalization}
 
 \textbf{Why Separate Train and Test Data:}
 \begin{itemize}
@@ -56,7 +62,7 @@
 
 
 
-\section{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss. [10]}
+\section{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss}
 
 \textbf{Prediction Function:}
 Given an input vector \( x \in \mathbb{R}^D \), the prediction function \( f \) for linear regression is defined as:
@@ -474,6 +480,285 @@ E(W) = -\sum_{i=1}^{N} \log p(C_{t_i} | \vec{x}_i; W)
 \]
 
 This loss function is minimized using optimization algorithms such as minibatch stochastic gradient descent (SGD).
+
+
+\section{
+Q4.3 Explain the relationship between the sigmoid function and softmax
+}
+
+The softmax function is a generalization of the sigmoid function to the case where there are multiple classes. For binary classification (\(K=2\)), the softmax function simplifies to the sigmoid function. Specifically, the sigmoid function is defined as:
+\[
+\sigma(x) = \frac{1}{1 + e^{-x}}
+\]
+which is the probability of a single class (e.g., class 1 in binary classification).
+
+The softmax function, which is used for multinomial logistic regression with \(K\) classes, is defined as:
+\[
+\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}
+\]
+for each class \(i\). When \(K=2\), this reduces to:
+\[
+\text{softmax}([x, 0]) = \frac{e^x}{e^x + e^0} = \frac{1}{1 + e^{-x}}
+\]
+which is identical to the sigmoid function. Therefore, the softmax function can be seen as an extension of the sigmoid function from binary to multiclass classification, where the output for each class is the normalized exponential function of the logits, ensuring that the class probabilities sum to one.
+
+The sigmoid function thus can be represented as a softmax function applied to a vector with two elements, where one element is the logit \(x\) and the other is zero. This connection shows the versatility of softmax as a multi-class sigmoid function.
+
+\section{Q4.4 L2-Regularized Minibatch SGD for K-Class Logistic Regression}
+
+To train a \( K \)-class logistic regression model, we use the minibatch stochastic gradient descent (SGD) with L2 regularization. The loss function is the regularized negative log-likelihood, and the gradient takes into account the regularization term.
+
+\subsection*{Algorithm}
+\begin{enumerate}
+    \item \textbf{Input:} Input dataset \( \mathbf{X} \in \mathbb{R}^{N \times D} \), target labels \( \mathbf{t} \in \{0, 1, \ldots, K-1\}^N \), learning rate \( \alpha \in \mathbb{R}^+ \), and regularization parameter \( \lambda \in \mathbb{R}^+ \).
+    
+    \item \textbf{Model Parameters:} Initialize weight matrix \( \mathbf{W} \in \mathbb{R}^{D \times K} \) and bias vector \( \mathbf{b} \in \mathbb{R}^K \) either to zero or with random values.
+    
+    \item \textbf{Optimization:} Repeat until convergence:
+    \begin{itemize}
+        \item Compute the gradient of the loss with respect to \( \mathbf{W} \) for a minibatch \( \mathcal{B} \):
+        \[
+        \mathbf{g} \leftarrow \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \nabla_{\mathbf{W}} \left( -\log(p(C_{t_i} | \mathbf{x}_i; \mathbf{W})) \right) + \lambda \mathbf{W}
+        \]
+        
+        \item Update the weights:
+        \[
+        \mathbf{W} \leftarrow \mathbf{W} - \alpha \mathbf{g}
+        \]
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{Loss Function}
+The regularized loss function for a minibatch \( \mathcal{B} \) is:
+\[
+E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \log(p(C_{t_i} | \mathbf{x}_i; \mathbf{W})) + \frac{\lambda}{2} \|\mathbf{W}\|^2_F
+\]
+where \( \|\mathbf{W}\|^2_F \) is the Frobenius norm of \( \mathbf{W} \), representing the L2 regularization term.
+
+\subsection*{Gradient}
+The gradient of the loss function with L2 regularization is:
+\[
+\nabla_{\mathbf{W}} E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} (p(C_{t_i} | \mathbf{x}_i; \mathbf{W}) - 1_t) \mathbf{x}_i^T + \lambda \mathbf{W}
+\]
+Note that $1_t$ is a one-hot vector with a 1 in the position corresponding to the target class $t$.
+
+
+\section{Q4.5 Convexity of Decision Regions in Multiclass Logistic Regression}
+
+To prove the convexity of decision regions in multiclass logistic regression, consider two points \( x_A \) and \( x_B \) in the same decision region \( R_k \). The decision criterion for logistic regression is based on the linear functions \( x^T W \), where \( W \) is the weight matrix. A point \( x \) is in region \( R_k \) if and only if
+
+\[ \hat{y}(x)_k = x^T W_k \]
+
+is the largest among all class scores. For two points \( x_A, x_B \in R_k \), and any \( \lambda \in [0, 1] \), their convex combination \( x = \lambda x_A + (1 - \lambda)x_B \) also satisfies
+
+\[ \hat{y}(x)_k = \lambda \hat{y}(x_A)_k + (1 - \lambda)\hat{y}(x_B)_k \]
+
+Given that both \( \hat{y}(x_A)_k \) and \( \hat{y}(x_B)_k \) are the largest scores for their respective points, \( \hat{y}(x)_k \) will also be the largest score for the convex combination, placing \( x \) in \( R_k \). This holds for any convex combination of points in \( R_k \), thus \( R_k \) is convex.
+
+
+\section{Q4.6 Considering a single-layer MLP with D input neurons, H hidden neurons, K output neurons, hidden activation f, and output activation a, list its parameters (including their size) and write down how the output is computed.}
+
+A single-layer Multilayer Perceptron (MLP) with \( D \) input neurons, \( H \) hidden neurons, and \( K \) output neurons, uses the following parameters:
+
+\begin{itemize}
+    \item Hidden layer weights \( W^{(h)} \in \mathbb{R}^{D \times H} \)
+    \item Hidden layer biases \( b^{(h)} \in \mathbb{R}^{H} \)
+    \item Output layer weights \( W^{(y)} \in \mathbb{R}^{H \times K} \)
+    \item Output layer biases \( b^{(y)} \in \mathbb{R}^{K} \)
+\end{itemize}
+
+The activation functions for the hidden and output layers are denoted by \( f \) and \( a \) respectively. The output is computed as follows:
+
+For a single input \( x \in \mathbb{R}^{D} \):
+\begin{enumerate}
+    \item Hidden layer activations: \( h = f(x^T W^{(h)} + b^{(h)}) \)
+    \item Output predictions: \( y = a(h^T W^{(y)} + b^{(y)}) \)
+\end{enumerate}
+
+For a batch of inputs \( X \in \mathbb{R}^{N \times D} \):
+\begin{enumerate}
+    \item Batch hidden layer activations: \( H = f(X W^{(h)} + 1b^{(h)}) \)
+    \item Batch output predictions: \( Y = a(H W^{(y)} + 1b^{(y)}) \)
+\end{enumerate}
+where \( 1 \) is a column vector of ones for bias broadcasting over the batch.
+
+\section{Q4.7 List the definitions of frequently used MLP output layer activations (the ones producing parameters of a Bernoulli distribution and a categorical distribution). Then write down three commonly used hidden layer activations (sigmoid, tanh, ReLU)}
+
+\subsection*{Output Layer Activations}
+\begin{itemize}
+    \item \textbf{Identity (Regression):} \( \text{identity}(x) = x \)
+    \item \textbf{Sigmoid (Binary Classification):} \( \sigma(x) = \frac{1}{1 + e^{-x}} \)
+    \item \textbf{Softmax (K-class Classification):} \( \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j} e^{x_j}} \)
+\end{itemize}
+
+\subsection*{Hidden Layer Activations}
+\begin{itemize}
+    \item \textbf{Sigmoid:} \( \sigma(x) = \frac{1}{1 + e^{-x}} \)
+    \item \textbf{Tanh:} \( \tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}} = 2\sigma(2x)-1\)
+    \item \textbf{ReLU:} \( \text{ReLU}(x) = \max(0, x) \)
+\end{itemize}
+
+\part{Lecture 5}
+
+\section{Q5.1 Considering a single-layer MLP with D input neurons, a ReLU hidden layer with H units and a softmax output layer with K units, write down the explicit formulas of the gradient of all the MLP parameters (two weight matrices and two bias vectors), assuming input x, target t, and negative log likelihood loss}
+
+Assuming an MLP with \( D \) input neurons, a ReLU hidden layer with \( H \) units, and a softmax output layer with \( K \) units, we compute the gradients of the loss \( L \) with respect to the weight matrices \( W^{(h)}, W^{(y)} \) and bias vectors \( b^{(h)}, b^{(y)} \) given an input \( x \), a target \( t \), and using the negative log likelihood loss.
+
+Let \( x \in \mathbb{R}^D \) be the input vector, \( h \in \mathbb{R}^H \) be the output of the hidden layer, and \( y \in \mathbb{R}^K \) be the output of the network. The negative log likelihood loss for a correct class \( c \) is given by \( L = -\log(y_c) = -\log(p(C | x))\).
+
+\subsection*{Forward Pass:}
+\begin{align*}
+h^{(in)} &= x^T W^{(h)} + b^{(h)} \\
+h &= \text{ReLU}(h^{(in)}) \\
+y^{(in)} &= h^T W^{(y)} + b^{(y)} \\
+y &= \text{softmax}(y^{(in)})
+\end{align*}
+
+\subsection*{Backward Pass (Gradients):}
+\begin{align*}
+\frac{\partial L}{\partial y_k} &= -\frac{t_k}{y_k} \\
+\frac{\partial L}{\partial \mathbf{y}^{(in)}} &= \mathbf{y} - \mathbf{t} \quad \text{(since } \sum_k t_k = 1 \text{)} \\
+\frac{\partial L}{\partial \mathbf{W}^{(y)}} &= \mathbf{h} \left(\frac{\partial L}{\partial \mathbf{y}^{(in)}}\right)^\top \\
+\frac{\partial L}{\partial \mathbf{b}^{(y)}} &= \frac{\partial L}{\partial \mathbf{y}^{(in)}} \\
+\frac{\partial L}{\partial \mathbf{h}} &= \mathbf{W}^{(y)} \frac{\partial L}{\partial \mathbf{y}^{(in)}}^\top \\
+\frac{\partial L}{\partial \mathbf{h}^{(in)}} &= \begin{cases}
+\frac{\partial L}{\partial \mathbf{h}} & \text{if } \mathbf{h}^{(in)} > 0 \\
+0 & \text{otherwise}
+\end{cases} \quad \text{(ReLU gradient)} \\
+\frac{\partial L}{\partial \mathbf{W}^{(h)}} &= \mathbf{x} \left(\frac{\partial L}{\partial \mathbf{h}^{(in)}}\right)^\top \\
+\frac{\partial L}{\partial \mathbf{b}^{(h)}} &= \frac{\partial L}{\partial \mathbf{h}^{(in)}}
+\end{align*}
+
+\subsection*{Gradient of Loss with respect to Output Probabilities \( \mathbf{y} \)}
+\begin{equation*}
+\frac{\partial L}{\partial \mathbf{y}} = - \frac{\mathbf{t}}{\mathbf{y}}
+\end{equation*}
+
+\subsection*{Gradient of Output Probabilities with respect to Logits \( \mathbf{y}^{(\text{in})} \)}
+The softmax function for a class \( k \) is given by \( y_k = \frac{e^{y^{(\text{in})}_k}}{\sum_j e^{y^{(\text{in})}_j}} \). Its derivative with respect to the logits \( y^{(\text{in})}_i \) is:
+\begin{align*}
+\frac{\partial y_k}{\partial y^{(\text{in})}_i} &= \begin{cases}
+y_k (1 - y_i) & \text{if } i = k, \\
+-y_k y_i & \text{if } i \neq k.
+\end{cases}
+\end{align*}
+
+\subsection*{Chain Rule Application for Loss Gradient with respect to Logits}
+\begin{align*}
+\frac{\partial L}{\partial y^{(\text{in})}_i} &= \sum_k \frac{\partial L}{\partial y_k} \frac{\partial y_k}{\partial y^{(\text{in})}_i} \\
+&= \frac{\partial L}{\partial y_i} \frac{\partial y_i}{\partial y^{(\text{in})}_i} + \sum_{k \neq i} \frac{\partial L}{\partial y_k} \frac{\partial y_k}{\partial y^{(\text{in})}_i} \\
+&= -\frac{t_i}{y_i} y_i (1 - y_i) - \sum_{k \neq i} \frac{t_k}{y_k} (-y_k y_i) \\
+&= -t_i + t_i y_i + \sum_{k \neq i} t_k y_i \\
+&= -t_i + y_i \left(t_i + \sum_{k \neq i} t_k\right) \\
+&= -t_i + y_i \sum_k t_k \\
+&= y_i - t_i \quad \text{(since \( \sum_k t_k = 1 \) for one-hot encoded targets)}
+\end{align*}
+
+\subsection*{Gradient of Loss with respect to Output Layer Weights \( \mathbf{W}^{(y)} \)}
+\begin{align*}
+\frac{\partial L}{\partial \mathbf{W}^{(y)}} &= \frac{\partial L}{\partial \mathbf{y}^{(\text{in})}} \frac{\partial \mathbf{y}^{(\text{in})}}{\partial \mathbf{W}^{(y)}} \\
+&= \left( \mathbf{y} - \mathbf{t} \right)^\top \mathbf{h}
+\end{align*}
+
+\subsection*{Gradient of Loss with respect to Output Layer Biases \( \mathbf{b}^{(y)} \)}
+\begin{equation*}
+\frac{\partial L}{\partial \mathbf{b}^{(y)}} = \mathbf{y} - \mathbf{t}
+\end{equation*}
+
+\subsection*{Gradient of Loss with respect to Hidden Layer Outputs \( \mathbf{h} \)}
+\begin{equation*}
+\frac{\partial L}{\partial \mathbf{h}} = \mathbf{W}^{(y)} \left( \mathbf{y} - \mathbf{t} \right)
+\end{equation*}
+
+\subsection*{Gradient of Loss with respect to Hidden Layer Pre-Activation \( \mathbf{h}^{(\text{in})} \)}
+\begin{equation*}
+\frac{\partial L}{\partial \mathbf{h}^{(\text{in})}} = \frac{\partial L}{\partial \mathbf{h}} \cdot \mathbb{I}(\mathbf{h}^{(\text{in})} > 0)
+\end{equation*}
+where \( \mathbb{I} \) is the indicator function, yielding 1 for elements where the condition is true and 0 otherwise, which corresponds to the derivative of the ReLU activation function.
+
+\subsection*{Gradient of Loss with respect to Hidden Layer Weights \( \mathbf{W}^{(h)} \)}
+\begin{align*}
+\frac{\partial L}{\partial \mathbf{W}^{(h)}} &= \mathbf{x}^\top \frac{\partial L}{\partial \mathbf{h}^{(\text{in})}}
+\end{align*}
+
+\subsection*{Gradient of Loss with respect to Hidden Layer Biases \( \mathbf{b}^{(h)} \)}
+\begin{equation*}
+\frac{\partial L}{\partial \mathbf{b}^{(h)}} = \frac{\partial L}{\partial \mathbf{h}^{(\text{in})}}
+\end{equation*}
+
+\subsection*{Update Rules:}
+\begin{align*}
+W^{(h)} &= W^{(h)} - \alpha \frac{\partial L}{\partial W^{(h)}} \\
+b^{(h)} &= b^{(h)} - \alpha \frac{\partial L}{\partial b^{(h)}} \\
+W^{(y)} &= W^{(y)} - \alpha \frac{\partial L}{\partial W^{(y)}} \\
+b^{(y)} &= b^{(y)} - \alpha \frac{\partial L}{\partial b^{(y)}}
+\end{align*}
+
+In these equations, \( \alpha \) represents the learning rate, and the derivatives with respect to \( h^{(in)} \) take into account the ReLU activation, which is zero for negative inputs and equal to the derivative of the loss with respect to \( h \) otherwise. The derivative with respect to \( y^{(in)} \) is computed as the difference between the output probabilities \( y \) and the one-hot encoded target vector \( t \).
+
+\section*{Q5.2 Formulate Universal Approximation Theorem ('89)}
+
+Let \(\phi(x) : \mathbb{R} \rightarrow \mathbb{R}\) be a nonconstant, bounded and nondecreasing continuous function. (Later a proof was given also for \(\phi = \text{ReLU}\) and even for any nonpolynomial function.)
+
+For any \(\epsilon > 0\) and any continuous function \(f : [0, 1]^D \rightarrow \mathbb{R}\), there exists \(H \in \mathbb{N}\), \(\mathbf{v} \in \mathbb{R}^H\), \(\mathbf{b} \in \mathbb{R}^H\) and \(\mathbf{W} \in \mathbb{R}^{D \times H}\), such that if we denote
+
+\[
+F(\mathbf{x}) = \mathbf{v}^T \phi(\mathbf{W}^T \mathbf{x} + \mathbf{b}) = \sum_{i=1}^{H} v_i \phi(\mathbf{x}^T \mathbf{W}_{*,i} + b_i),
+\]
+
+where \(\phi\) is applied elementwise, then for all \(\mathbf{x} \in [0, 1]^D\):
+
+\[
+\left| F(\mathbf{x}) - f(\mathbf{x}) \right| < \epsilon.
+\]
+
+\section{How do we search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$?}
+
+We search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$ using the method of Lagrange multipliers. This involves finding a point $\mathbf{x} \in \mathbb{R}^D$ and a set of multipliers $\lambda_1, \ldots, \lambda_m \in \mathbb{R}$ such that the gradient of the Lagrangian function $\mathcal{L}(\mathbf{x}, \mathbf{\lambda})$ with respect to both $\mathbf{x}$ and $\mathbf{\lambda}$ is zero.
+
+The Lagrangian is defined as:
+\[
+\mathcal{L}(\mathbf{x}, \mathbf{\lambda}) = f(\mathbf{x}) - \sum_{i=1}^{m} \lambda_i g_i(\mathbf{x}),
+\]
+where $\nabla_{\mathbf{x}}\mathcal{L}(\mathbf{x}, \mathbf{\lambda}) = 0$ and $\nabla_{\mathbf{\lambda}}\mathcal{L}(\mathbf{x}, \mathbf{\lambda}) = 0$. This gives us a system of equations which, when solved, gives the points $\mathbf{x}$ that minimize $f(\mathbf{x})$ subject to the constraints.
+
+
+\section{Q5.3 Prove which categorical distribution with $N$ classes has maximum entropy}
+
+We want to find a categorical distribution \( \mathbf{p} = (p_1, \ldots, p_N) \) that maximizes entropy, subject to the constraints:
+
+\begin{itemize}
+    \item \( p_i \geq 0 \) for all \( i \),
+    \item \( \sum_{i=1}^{N} p_i = 1 \).
+\end{itemize}
+
+The entropy \( H(\mathbf{p}) \) for a categorical distribution is given by:
+
+\[ H(\mathbf{p}) = -\sum_{i=1}^{N} p_i \log(p_i) \]
+
+We form the Lagrangian \( \mathcal{L} \) to include the equality constraint:
+
+\[ \mathcal{L}(\mathbf{p}, \lambda) = -\sum_{i=1}^{N} p_i \log(p_i) + \lambda \left( \sum_{i=1}^{N} p_i - 1 \right) \]
+
+Taking the derivative of \( \mathcal{L} \) with respect to \( p_i \) and setting it to zero:
+
+\[ 0 = \frac{\partial \mathcal{L}}{\partial p_i} = -\log(p_i) - 1 + \lambda \]
+
+Solving for \( p_i \), we get:
+
+\[ p_i = e^{\lambda - 1} \]
+
+Since all \( p_i \) must satisfy the equality constraint \( \sum_{i=1}^{N} p_i = 1 \), substituting \( p_i \) gives:
+
+\[ \sum_{i=1}^{N} e^{\lambda - 1} = 1 \]
+
+\[ N e^{\lambda - 1} = 1 \]
+
+\[ e^{\lambda - 1} = \frac{1}{N} \]
+
+\[ p_i = \frac{1}{N} \]
+
+Therefore, each \( p_i \) is \( \frac{1}{N} \), indicating that the distribution with maximum entropy is the uniform distribution.
 
 
 \end{document}
