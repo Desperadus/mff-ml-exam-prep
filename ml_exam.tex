@@ -712,7 +712,7 @@ where \(\phi\) is applied elementwise, then for all \(\mathbf{x} \in [0, 1]^D\):
 \left| F(\mathbf{x}) - f(\mathbf{x}) \right| < \epsilon.
 \]
 
-\section{How do we search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$?}
+\section{Q5.2 How do we search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$?}
 
 We search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$ using the method of Lagrange multipliers. This involves finding a point $\mathbf{x} \in \mathbb{R}^D$ and a set of multipliers $\lambda_1, \ldots, \lambda_m \in \mathbb{R}$ such that the gradient of the Lagrangian function $\mathcal{L}(\mathbf{x}, \mathbf{\lambda})$ with respect to both $\mathbf{x}$ and $\mathbf{\lambda}$ is zero.
 
@@ -759,6 +759,312 @@ Since all \( p_i \) must satisfy the equality constraint \( \sum_{i=1}^{N} p_i =
 \[ p_i = \frac{1}{N} \]
 
 Therefore, each \( p_i \) is \( \frac{1}{N} \), indicating that the distribution with maximum entropy is the uniform distribution.
+
+\section{Q5.4 Consider derivation of softmax using maximum entropy principle, assuming we have a dataset of $N$ examples $(x_i,t_i)$, $x_i \in \mathbb{R}^D$, $t_i \in \{1,2,\ldots,K\}$. Formulate the three conditions we impose on the searched $\pi:\mathbb{R}^D \rightarrow \mathbb{R}^K$, and write down the Lagrangian to be minimized.}
+
+Given a dataset of $N$ examples $(x_i, t_i)$ where $x_i \in \mathbb{R}^D$ and $t_i \in \{1, 2, \ldots, K\}$, we want to derive a softmax function using the maximum entropy principle. The softmax function $\pi(x)$ must satisfy the following conditions:
+
+\begin{enumerate}
+    \item For all $x \in \mathbb{R}^D$ and each class $k$, the predicted probability $\pi(x)_k \geq 0$.
+    \item For each input $x$, the probabilities must sum up to 1: $\sum_{k=1}^K \pi(x)_k = 1$.
+    \item The expected value of the predicted distribution should match the empirical distribution: $\frac{1}{N} \sum_{i=1}^N \pi(x_i)_k = \frac{1}{N} \sum_{i=1}^N [t_i = k]$ for each class $k$.
+\end{enumerate}
+
+The Lagrangian $\mathcal{L}$, incorporating these constraints with Lagrange multipliers $\lambda$ and $\mu_k$.
+
+We want to minimize $-\sum_{i=1}^{N} H(\pi(x_i))$ given
+\begin{itemize}
+    \item for $1 \leq i \leq N$, $1 \leq k \leq K$: $\pi(x_i)_k \geq 0$,
+    \item for $1 \leq i \leq N$: $\sum_{k=1}^{K} \pi(x_i)_k = 1$,
+    \item for $1 \leq j \leq D$, $1 \leq k \leq K$: $\sum_{i=1}^{N} \pi(x_i)_k x_{i,j} = \sum_{i=1}^{N} [t_i = k] x_{i,j}$.
+\end{itemize}
+
+We therefore form a Lagrangian (ignoring the first inequality constraint):
+\[
+\mathcal{L} = \sum_{i=1}^{N} \sum_{k=1}^{K} \pi(x_i)_k \log(\pi(x_i)_k) 
+- \sum_{j=1}^{D} \sum_{k=1}^{K} \lambda_{j,k} \left( \sum_{i=1}^{N} \pi(x_i)_k x_{i,j} - [t_i = k] x_{i,j} \right) 
+- \sum_{i=1}^{N} \beta_i \left( \sum_{k=1}^{K} \pi(x_i)_k - 1 \right).
+\]
+
+
+\section{Q5.5 Define precision (including true positives and others), recall, $F1$ score, and $F\beta$ score (we stated several formulations for $F1$ and $F\beta$ scores; any one of them will do)}
+
+The confusion matrix is a table used to describe the performance of a classification model:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l|l|l}
+& \textbf{Predicted Positive} & \textbf{Predicted Negative} \\ \hline
+\textbf{Actual Positive} & True Positives (TP) & False Negatives (FN) \\ \hline
+\textbf{Actual Negative} & False Positives (FP) & True Negatives (TN) \\
+\end{tabular}
+\caption{Confusion Matrix}
+\label{table:confusion_matrix}
+\end{table}
+
+Precision quantifies the number of correct positive predictions made. It is defined as:
+\[ \text{Precision} = \frac{\text{True Positives (TP)}}{\text{TP} + \text{False Positives (FP)}} \]
+
+Recall measures the proportion of actual positives correctly identified. It is defined as:
+\[ \text{Recall} = \frac{\text{TP}}{\text{TP} + \text{False Negatives (FN)}} \]
+
+The \( F_1 \) score is the harmonic mean of precision and recall. It is defined as:
+\[ F_1 = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \]
+
+The \( F_{\beta} \) score generalizes the \( F_1 \) score by weighing recall more heavily than precision. It is defined as:
+\[ F_{\beta} = (1 + \beta^2) \times \frac{\text{Precision} \times \text{Recall}}{(\beta^2 \times \text{Precision}) + \text{Recall}} \]
+
+\section{Q5.6 Explain the difference between micro-averaged and macro-averaged $F1$ scores. }
+
+The micro-averaged \( F_1 \) score (\( F_1^{\mu} \)) aggregates the contributions of all classes to compute the average score. It is given by:
+\[ F_1^{\mu} =2\times \frac{Precision_{micro}\times Recall_{micro}}{Precision_{micro}+Recall_{micro}} = \frac{2 \sum TP}{2 \sum TP + \sum FP + \sum FN} \]
+
+The macro-averaged \( F_1 \) score (\( F_1^{M} \)) is the arithmetic mean of the \( F_1 \) scores per class, treating all classes equally:
+\[ F_1^{M} = \frac{1}{K} \sum_{k=1}^{K} F_{1k} \]
+where \( F_{1k} \) is the \( F_1 \) score of the \( k \)-th class.
+
+\section{Q5.7 Explain (using examples) why accuracy is not a suitable metric for unbalanced target classes, e.g., for a diagnostic test for a contagious disease}
+
+Accuracy is defined as the ratio of correctly predicted observations to the total observations. In the context of unbalanced datasets, particularly in disease diagnosis where the disease prevalence is low, a model might predict "no disease" for all patients and still achieve high accuracy. For example:
+
+\[
+\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{\text{Total Observations}}
+\]
+
+Consider a dataset with 1000 individuals where only 10 have the disease. A model that predicts "no disease" for everyone would have an accuracy of:
+
+\[
+\frac{0 + 990}{10 + 990} = \frac{990}{1000} = 99\%
+\]
+
+Despite the high accuracy, the model fails to detect any true disease cases, demonstrating the inadequacy of accuracy as a performance metric in such scenarios. It is more informative to look at metrics such as precision, recall, and the \( F_1 \) score in cases of class imbalance.
+
+\part{Lecture 6}
+
+\section{
+Q6.1 Explain how is the TF-IDF weight of a given document-term pair computed
+}
+
+The TF-IDF weight of a document-term pair is given by:
+
+\[
+\text{TF-IDF}(t,d) = \text{TF}(t,d) \times \text{IDF}(t,D)
+\]
+
+where:
+\begin{itemize}
+  \item \( \text{TF}(t,d) \) is the term frequency, defined as the number of times term \( t \) appears in document \( d \), normalized or not.
+  \item \( \text{IDF}(t,D) \) is the inverse document frequency, calculated as:
+
+  \[
+  \text{IDF}(t,D) = \log \frac{N}{|\{d \in D : t \in d\}| (optionaly + 1))}
+  \]
+
+  In this formula, \( N \) is the total number of documents in the corpus \( D \), and \( |\{d \in D : t \in d\}| \) is the number of documents where the term \( t \) appears (i.e., \( \text{df}_t \), the document frequency of \( t \)).
+\end{itemize}
+
+The TF-IDF score increases with the number of times a word appears in the document but is offset by the frequency of the word in the corpus, which helps to adjust for the fact that some words appear more frequently in general.
+
+\section{Q6.2 Define conditional entropy, mutual information, write down the relation between them, and finally prove that mutual information is zero if and only if the two random variables are independent (you do not need to prove statements about $D_{KL}$)}
+
+Conditional entropy $H(Y|X)$ quantifies the expected value of the entropy of $Y$ given that the value of $X$ is known. It is defined as:
+
+\[
+H(Y|X) = -\sum_{x \in X, y \in Y} P(x, y) \log P(y|x).
+\]
+
+Mutual information $I(X; Y)$ measures the amount of information that one random variable contains about another random variable. It is defined as:
+
+\[
+I(X; Y) = \sum_{x \in X, y \in Y} P(x, y) \log \frac{P(x, y)}{P(x)P(y)}.
+\]
+
+The relationship between conditional entropy and mutual information can be expressed as:
+
+\[
+I(X; Y) = H(Y) - H(Y|X).
+\]
+
+This equation implies that mutual information is the reduction in uncertainty about $Y$ due to the knowledge of $X$.
+
+The mutual information is symmetrical, so
+\[
+I(X; Y) = I(Y; X) = H(X) - H(X|Y) = H(Y) - H(Y|X).
+\]
+
+Therefore
+\[
+    I(X;Y) = D_{KL}(P(X,Y)||P(X)P(Y))
+\]
+
+\section{Q6.3 Show that TF-IDF terms can be considered portions of suitable mutual information
+}
+
+Let $\mathcal{D}$ be a collection of documents and $\mathcal{T}$ a collection of terms. We can express the mutual information between a document $d$ and a term $t$ using their probabilities and the TF-IDF measure.
+
+\begin{itemize}
+  \item The probability of selecting a document $d$ uniformly at random from $\mathcal{D}$ is $P(d) = \frac{1}{|\mathcal{D}|}$.
+  \item The information content of a document $I(d) = H(\mathcal{D}) = \log |\mathcal{D}|$.
+  \item The probability of a term $t$ occurring in a document $d$ is $P(t|d) = \frac{|\{d \in \mathcal{D} : t \in d\}|}{|\mathcal{D}|}$.
+  \item The information content of a term $t$ in a document $d$ is $I(t|d) = \log |\{d \in \mathcal{D} : t \in d\}|$.
+  \item The difference in information content of a document with and without a term is the IDF: $I(d) - I(t|d) = \log |\mathcal{D}| - \log |\{d \in \mathcal{D} : t \in d\}| = \text{IDF}(t)$.
+\end{itemize}
+
+The mutual information $I(\mathcal{D}; \mathcal{T})$ is calculated as:
+
+\[
+I(\mathcal{D}; \mathcal{T}) = \sum_{d, t \in d} P(d) \cdot P(t|d) \cdot (I(d) - I(t|d)).
+\]
+
+Given the definitions of TF and IDF, we can write:
+
+\[
+I(\mathcal{D}; \mathcal{T}) = \frac{1}{|\mathcal{D}|} \sum_{d, t \in d} \text{TF}(t, d) \cdot \text{IDF}(t).
+\]
+
+Thus, we can interpret the TF-IDF weight as a portion of the mutual information between the collection of documents $\mathcal{D}$ and the collection of terms $\mathcal{T}$, where each TF-IDF value corresponds to a “bit of information” for a document-term pair.
+
+\section{Q6.4 Explain the concept of word embedding in the context of MLP and how it relates to representation learning}
+
+Word embedding is a technique in representation learning where words from a vocabulary are associated with vectors of real numbers, effectively capturing their semantic meanings in a continuous vector space. Semantically similar words are positioned closely in this space. 
+
+In the realm of Multilayer Perceptrons (MLPs), these embeddings serve as the input layer. Each word is represented by a unique, learnable vector, rather than a high-dimensional, sparse one-hot vector. Throughout the training phase, the MLP fine-tunes these embeddings via backpropagation, based on the context in which words appear.
+
+This approach is a key part of representation learning because it enables MLPs to internalize language subtleties directly from data, surpassing the need for manual feature engineering. It allows the network to capture complex syntactic and semantic word relationships, enhancing its performance on Natural Language Processing (NLP) tasks such as sentiment analysis, translation, and text categorization.
+
+Word embeddings are the cornerstone of modern NLP models and are integrated into more advanced neural architectures like Recurrent Neural Networks (RNNs), Long Short-Term Memory networks (LSTMs), and Transformers, driving forward the state-of-the-art in various NLP applications.
+
+
+\section{Q6.4 Describe the skip-gram model trained using negative sampling.}
+
+The skip-gram model aims to learn word embeddings that predict the context words given a target word. For a given word in the vocabulary, the model outputs a probability distribution over all words to be the 'context' words.
+
+The Skip-gram model with negative sampling (SGNS) enhances training efficiency by altering the objective function. Instead of predicting the presence of context words among all words in the vocabulary, SGNS focuses on distinguishing the actual context words from a number of randomly sampled 'negative' words.
+
+Given a pair of words (target word $w$ and context word $c$), the model learns to assign high probabilities to the actual context words and low probabilities to the negative samples. This is achieved by maximizing the log probability of the sigmoid function $\sigma$, which represents the model's estimated probability that a given pair (target-context) is valid:
+
+\begin{equation}
+    \log \sigma(\mathbf{v}_c^\top \mathbf{e}_w)
+\end{equation}
+
+Here, $\mathbf{e}_w$ is the embedding of the target word, and $\mathbf{v}_c$ is the embedding of the context word. The negative samples are then introduced in the loss function, where the model maximizes the log probability of the sigmoid of the negative of the dot product between the target word embedding and the embedding of a negative sample $c_i$:
+
+\begin{equation}
+    -\log \sigma(-\mathbf{v}_{c_i}^\top \mathbf{e}_w)
+\end{equation}
+
+The overall objective combines these terms for the positive and negative samples, summing across all positive pairs observed in the training data and a set of negative samples drawn according to a noise distribution, often related to word frequency.
+
+By focusing only on a small subset of negative samples rather than the entire vocabulary, SGNS reduces computational complexity significantly, allowing for faster training over large datasets.
+
+\begin{algorithm}
+\caption{Word2Vec Training Algorithm}
+\begin{algorithmic}[1]
+\State Initialize word embeddings for the target words and context words
+\For{each epoch}
+    \For{each word $w$ in the corpus}
+        \State context = GetContextWords($w$, window\_size)
+        \For{each context word $c$ in context}
+            \State // Positive sample training
+            \State $z$ = DotProduct(embedding[$w$], embedding[$c$])
+            \State Update embeddings using gradient ascent with the objective: $\log(\sigma(z))$
+            \State // Negative sampling training
+            \For{$i = 1$ to $k$} // $k$ is the number of negative samples
+                \State $c_i$ = SampleNegativeWord()
+                \State $z_i$ = DotProduct(embedding[$w$], embedding[$c_i$])
+                \State Update embeddings using gradient ascent with the objective: $\log(\sigma(-z_i))$
+            \EndFor
+            \State // Update the embeddings
+            \State embedding[$w$] = embedding[$w$] - learning\_rate * gradient($w$)
+            \State embedding[$c$] = embedding[$c$] - learning\_rate * gradient($c$)
+            \For{$i = 1$ to $k$}
+                \State embedding[$c_i$] = embedding[$c_i$] - learning\_rate * gradient($c_i$)
+            \EndFor
+        \EndFor
+    \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\section{Q6.5 How would you proceed to train a part-of-speech tagger (i.e., you want to assign each word with its part of speech) if you only could use pre-trained word embeddings and MLP classifier?}
+
+I don't know mucb about this question, so this is what GPT-4 came up with:
+
+\subsection*{Data Preparation}
+\begin{itemize}
+    \item Acquire a dataset with words annotated with POS tags.
+    \item Tokenize and embed words using pre-trained vectors.
+    \item Construct input features from contextual embeddings.
+    \item Encode POS tags with one hot vectors.
+\end{itemize}
+
+\subsection*{MLP Architecture}
+\begin{itemize}
+    \item Input layer: Size equal to concatenated embedding vectors.
+    \item Hidden layers: One or more, with activation functions like ReLU.
+    \item Output layer: Softmax with a neuron for each POS tag.
+\end{itemize}
+
+\subsection*{Training Process}
+\begin{itemize}
+    \item Divide data into training, validation, and test sets.
+    \item Train with categorical cross-entropy and optimizers like Adam.
+    \item Use validation set for hyperparameter tuning and early stopping.
+\end{itemize}
+
+\subsection*{Evaluation}
+\begin{itemize}
+    \item Assess performance on the test set.
+    \item Use classification metrics such as accuracy and F1 score.
+\end{itemize}
+
+\subsection*{Post-Processing}
+\begin{itemize}
+    \item Optionally apply sequence modeling techniques like CRFs.
+\end{itemize}
+
+\part{Lecture 7}
+
+\section{Q7.1 Describe kk-nearest neighbors prediction, both for regression and classification. Define Lp norm and describe uniform, inverse, and softmax weighting}
+
+\subsection*{Regression}
+For regression, k-NN predicts the target value by a weighted average of the targets of the k nearest neighbors:
+\[ t = \frac{\sum_{i} w_i \cdot t_i}{\sum_{j} w_j} \]
+
+\subsection*{Classification}
+For classification, k-NN uses voting among the k nearest neighbors. For uniform weights:
+\[ \text{class} = \text{mode}\{t_1, t_2, \ldots, t_k\} \]
+With non-uniform weights, the predicted class maximizes the weighted sum of targets:
+\[ \text{class} = \arg\max \sum_{i} w_i \cdot t_{i,k} \]
+
+\subsection*{Lp-norm}
+The \( L_p \)-norm is defined as:
+\[ \lVert x - y \rVert_p = \left( \sum_{i=1}^{D} |x_i - y_i|^p \right)^{1/p} \]
+
+\subsection*{Weighting Methods}
+\begin{itemize}
+    \item Uniform: \( w_i = 1 \)
+    \item Inverse: \( w_i = \frac{1}{\text{distance}(x, x_i)} \)
+    \item Softmax: \( w_i = \frac{\exp(-\text{distance}(x, x_i))}{\sum_j \exp(-\text{distance}(x, x_j))} \)
+\end{itemize}
+
+\section{L2-Regularization from Bayesian Inference}
+
+Assuming a Gaussian prior for model parameters $\mathbf{w}$ with zero mean and variance $\sigma^2$, the prior distribution is given as $p(\mathbf{w}_i) = \mathcal{N}(\mathbf{w}_i; 0, \sigma^2)$. Consequently, the prior over all weights $\mathbf{w}$ is $p(\mathbf{w}) = \prod_{i=1}^N \mathcal{N}(\mathbf{w}_i; 0, \sigma^2) = \mathcal{N}(\mathbf{w}; 0, \sigma^2 \mathbf{I})$. The maximum a posteriori (MAP) estimation is then:
+
+\begin{align*}
+\mathbf{w}_{\text{MAP}} &= \arg \max_{\mathbf{w}} p(\mathbf{X} | \mathbf{w})p(\mathbf{w}) \\
+&= \arg \max_{\mathbf{w}} \prod_{i=1}^N p(\mathbf{x}_i | \mathbf{w})p(\mathbf{w}) \\
+&= \arg \min_{\mathbf{w}} \sum_{i=1}^N \left( -\log p(\mathbf{x}_i | \mathbf{w}) - \log p(\mathbf{w}) \right).
+\end{align*}
+
+Incorporating the Gaussian prior probability, we get the L2-regularized objective:
+
+\begin{align*}
+\mathbf{w}_{\text{MAP}} &= \arg \min_{\mathbf{w}} \left[ \sum_{i=1}^N -\log p(\mathbf{x}_i | \mathbf{w}) + \frac{D}{2} \log(2\pi\sigma^2) + \frac{\| \mathbf{w} \|^2}{2\sigma^2} \right],
+\end{align*}
+
+which is the L2-regularization term.
 
 
 \end{document}
