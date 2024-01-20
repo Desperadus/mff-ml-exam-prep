@@ -20,6 +20,7 @@
 
 % For adding links
 \usepackage{hyperref}
+\usepackage{xcolor}
 
 \title{Machine Learning Exam Notes}
 \author{Tomáš Jelínek}
@@ -34,8 +35,11 @@
 \newpage
 
 \section{Disclaimer}
-These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2324-winter#home}{Introduction to Machine Learning with Python} in winter semester 2023/24 which is under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
+These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2324-winter#home}{Introduction to Machine Learning with Python} in winter semester 2023/24 which are under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
 Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were used in the proccess of writing this document.
+
+\section{License}
+\href{https://creativecommons.org/licenses/by-sa/4.0/}{CC-BY-SA-4.0}
 
 % Start writing your notes here
 \part{Lecture 1}
@@ -1048,7 +1052,7 @@ The \( L_p \)-norm is defined as:
     \item Softmax: \( w_i = \frac{\exp(-\text{distance}(x, x_i))}{\sum_j \exp(-\text{distance}(x, x_j))} \)
 \end{itemize}
 
-\section{L2-Regularization from Bayesian Inference}
+\section{Q7.2 Show that L2-regularization can be obtained from a suitable prior by Bayesian inference (from the MAP estimate)}
 
 Assuming a Gaussian prior for model parameters $\mathbf{w}$ with zero mean and variance $\sigma^2$, the prior distribution is given as $p(\mathbf{w}_i) = \mathcal{N}(\mathbf{w}_i; 0, \sigma^2)$. Consequently, the prior over all weights $\mathbf{w}$ is $p(\mathbf{w}) = \prod_{i=1}^N \mathcal{N}(\mathbf{w}_i; 0, \sigma^2) = \mathcal{N}(\mathbf{w}; 0, \sigma^2 \mathbf{I})$. The maximum a posteriori (MAP) estimation is then:
 
@@ -1066,6 +1070,501 @@ Incorporating the Gaussian prior probability, we get the L2-regularized objectiv
 
 which is the L2-regularization term.
 
+\section{Q7.3 Write down how $\mathbf{p(C_k|x)}$ is approximated in a Naive Bayes classifier, explicitly state the Naive Bayes assumption, and show how is the prediction performed.}
+
+The Naive Bayes classifier approximates the conditional probability \( p(C_k | x) \) using Bayes' theorem and the naive independence assumption. This assumption states that all features \( x_d \) are independent given the class \( C_k \). Therefore, the joint probability of the feature vector \( x \) given the class \( C_k \) can be expressed as the product of individual probabilities:
+
+\[
+p(x \mid C_k) = \prod_{d=1}^{D} p(x_d \mid C_k).
+\]
+
+Using Bayes' theorem, the posterior probability for class \( C_k \) given the feature vector \( x \) is then:
+
+\[
+p(C_k \mid x) = \frac{p(x \mid C_k) p(C_k)}{p(x)},
+\]
+
+where \( p(x) \) is the evidence term, typically ignored during prediction as it remains constant across all classes.
+
+The prediction for a new sample \( x \) is performed by choosing the class \( C_k \) that maximizes this posterior probability:
+
+\[
+\hat{C} = \arg\max_k p(C_k \mid x) = \arg\max_k \left( \prod_{d=1}^{D} p(x_d \mid C_k) \right) p(C_k).
+\]
+
+This approach allows for efficient computation and prediction in high-dimensional feature spaces.
+
+\section{Q7.4 Considering a Gaussian naive Bayes, describe how are $p(x_d|C_k)$ modeled (what distribution and which parameters does it have) and how we estimate it during fitting}
+
+In Gaussian Naive Bayes, the conditional probability \( p(x_d \mid C_k) \) for a continuous feature \( x_d \) given a class \( C_k \) is modeled by a normal distribution:
+
+\[
+p(x_d \mid C_k) = \mathcal{N}(x_d \mid \mu_{d,k}, \sigma_{d,k}^2).
+\]
+
+The parameters \( \mu_{d,k} \) and \( \sigma_{d,k}^2 \) of this distribution are estimated from the training data using maximum likelihood estimation (MLE). For each feature \( d \) and class \( k \), the MLE of the mean \( \mu_{d,k} \) is computed as:
+
+\[
+\mu_{d,k} = \frac{1}{N_k} \sum_{i=1}^{N_k} x_{i,d},
+\]
+
+where \( x_{i,d} \) is the \( i \)-th training sample of feature \( d \) that belongs to class \( C_k \), and \( N_k \) is the number of samples in class \( C_k \).
+
+The variance \( \sigma_{d,k}^2 \) is estimated as:
+
+\[
+\sigma_{d,k}^2 = \frac{1}{N_k} \sum_{i=1}^{N_k} (x_{i,d} - \mu_{d,k})^2.
+\]
+
+In practice, to avoid the issue of zero variance, a smoothing term \( \alpha \) is often added to the variance estimate:
+
+\[
+\sigma_{d,k}^2 = \frac{1}{N_k + \alpha} \sum_{i=1}^{N_k} (x_{i,d} - \mu_{d,k})^2 + \alpha.
+\]
+
+The smoothing term \( \alpha \) is a hyperparameter that can be tuned using cross-validation.
+
+\section{Q7.5 Considering a Bernoulli naive Bayes, describe how are $p(x_d | C_k)$ modeled (what distribution and which parameters does it have) and how we estimate it during fitting}
+
+In Bernoulli Naive Bayes, the probability of a binary feature \( x_d \) given a class \( C_k \), denoted as \( p(x_d | C_k) \), is modeled using a Bernoulli distribution with parameter \( p_{d,k} \). This parameter represents the probability of feature \( d \) being present in a sample of class \( C_k \).
+
+\[
+p(x_d \mid C_k) = p_{d,k}^{x_d} \cdot (1 - p_{d,k})^{(1-x_d)}.
+\]
+
+The likelihood of class \( C_k \) given the feature vector \( x \) is then:
+
+\[
+p(C_k \mid x) \propto \left( \prod_{d=1}^{D} p_{d,k}^{x_d} \cdot (1 - p_{d,k})^{(1-x_d)} \right) p(C_k),
+\]
+
+where \( D \) is the number of binary features.
+
+Taking the logarithm, we obtain:
+
+\[
+\log p(C_k \mid x) + c = \log p(C_k) + \sum_{d} \left( x_d \log p_{d,k} + \log(1 - p_{d,k}) \right) = b_k + x^T w_k,
+\]
+
+where \( c \) is a constant that does not depend on \( C_k \) and is not needed for prediction.
+
+The prediction is made by:
+
+\[
+\arg \max_k \log p(C_k \mid x) = \arg \max_k b_k + x^T w_k.
+\]
+
+The parameter \( p_{d,k} \) is estimated during training as the relative frequency of the feature \( d \) in samples of class \( C_k \):
+
+\[
+p_{d,k} = \frac{1}{N_k} \sum_{i=1}^{N_k} x_{i,d},
+\]
+
+where \( x_{i,d} \) is the presence or absence of feature \( d \) in the \( i \)-th sample, and \( N_k \) is the total number of samples in class \( C_k \).
+
+To prevent zero probabilities and to handle unseen features in the training data, smoothing is applied. The smoothed estimate for \( p_{d,k} \) with Laplace smoothing is:
+
+\[
+p_{d,k} = \frac{\sum_{i=1}^{N_k} x_{i,d} + \alpha}{N_k + 2\alpha},
+\]
+
+where \( \alpha \) is a smoothing parameter, typically set to 1.
+
+\part{Lecture 8}
+
+\section{Q8.1 Prove that independent discrete random variables are uncorrelated}
+
+Given two discrete random variables \( X \) and \( Y \), they are said to be independent if the joint probability distribution can be expressed as the product of their marginal distributions:
+\[
+P(X = x, Y = y) = P(X = x)P(Y = y) \quad \text{for all } x \text{ and } y.
+\]
+
+The covariance of \( X \) and \( Y \) is defined as:
+\[
+\text{Cov}(X, Y) = \mathbb{E}[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])].
+\]
+
+For independent variables, the expectation of the product is the product of the expectations:
+\begin{align*}
+\text{Cov}(X, Y) &= \mathbb{E}[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])] \\
+&= \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y] - \mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[X]\mathbb{E}[Y] \\
+&= \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y].
+\end{align*}
+
+Since \( X \) and \( Y \) are independent:
+\[
+\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y].
+\]
+
+Substituting this into the covariance formula gives:
+\[
+\text{Cov}(X, Y) = \mathbb{E}[X]\mathbb{E}[Y] - \mathbb{E}[X]\mathbb{E}[Y] = 0.
+\]
+
+Therefore, if \( X \) and \( Y \) are independent, their covariance is zero, implying that they are uncorrelated.
+
+\section{Q8.2 Write down the definition of covariance and Pearson correlation coefficient $\rho$ , including its range}
+
+The covariance between two random variables \( X \) and \( Y \) is a measure of the joint variability of \( X \) and \( Y \). It is defined as:
+\[
+\text{Cov}(X, Y) = \mathbb{E}[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])]
+\]
+where \( \mathbb{E} \) denotes the expected value.
+
+The Pearson correlation coefficient, denoted as \( \rho \) or \( r \), is defined as:
+\[
+\rho = \frac{\text{Cov}(X, Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}}
+\]
+\[
+r = \frac{\sum_{i} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i} (x_i - \bar{x})^2 \sum_{i} (y_i - \bar{y})^2}}
+\]
+where:
+\begin{itemize}
+  \item \( \rho \) is used when the full expectation is computed (population Pearson correlation coefficient);
+  \item \( r \) is used when estimating the coefficient from data (sample Pearson correlation coefficient);
+  \item \( \bar{x} \) and \( \bar{y} \) are sample estimates of the respective means.
+\end{itemize}
+
+The range of the Pearson correlation coefficient is from -1 to 1, inclusive. A value of 1 implies a perfect positive linear relationship between variables, -1 implies a perfect negative linear relationship, and 0 implies no linear relationship.
+
+\section{Q8.3 Explain how are the Spearman's rank correlation coefficient and the Kendall rank correlation coefficient computed (no need to describe the Pearson correlation coefficient)}
+
+
+\subsection*{Spearman's Rank Correlation Coefficient}
+Spearman's rank correlation coefficient, denoted by \(\rho\), is a nonparametric measure of rank correlation (statistical dependence between the rankings of two variables). It assesses how well the relationship between two variables can be described using a monotonic function. The formula for Spearman's rank correlation coefficient is:
+\[
+\rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)} = \frac{\text{cov}(R(X), R(Y))}{\sigma_{R(X)} \sigma_{R(Y)}}
+\]
+where \(d_i\) is the difference between the ranks of corresponding variables and \(n\) is the number of observations.
+Hence $d_i = rank(X_i) - rank(X_i)$
+\subsection*{Kendall Rank Correlation Coefficient}
+Kendall rank correlation coefficient, denoted by \(\tau\), measures the ordinal association between two quantities. It is defined as:
+\[
+\tau = \frac{\sum_{i<j} \text{sign}(x_j - x_i) \text{sign}(y_j - y_i)}{\frac{1}{2} n(n-1)}
+\]
+where \(\text{sign}(x)\) is the sign function, which returns \(-1\), \(0\), or \(1\) depending on the sign of \(x\), and \(n\) is the number of observations.
+
+Both coefficients range from -1 to 1. A coefficient of 1 implies a perfect agreement, -1 implies perfect disagreement, and 0 implies the absence of association.
+
+\section{Q8.4 Describe setups where a correlation coefficient might be a good evaluation metric}
+
+Correlation coefficients are powerful statistical tools used to measure the strength and direction of a linear relationship between two variables. They are particularly useful in various setups, including:
+
+\begin{enumerate}
+  \item \textbf{Inter-Annotator Agreement (IAA):} In tasks where annotators provide ratings on a continuous scale, Pearson's or Spearman's correlation coefficients can measure the agreement level between annotators. High correlation indicates strong agreement and consistency in the ratings.
+
+  \item \textbf{Predictive Model Evaluation:} In regression analysis, correlation coefficients help to assess the predictive performance of a model. For example, a high Pearson correlation between predicted and actual values indicates a model with good predictive capabilities.
+
+  \item \textbf{Feature Selection:} Correlation coefficients can identify the relationships between features in a dataset. Features with high correlation may carry redundant information, and one of them can be removed to reduce dimensionality.
+
+  \item \textbf{Time Series Analysis:} In financial or economic studies, correlation coefficients can analyze the relationship between different time series data, like stock prices or interest rates, helping to identify trends and co-movements.
+
+  \item \textbf{Psychometrics:} They are used to establish the reliability of psychometric tests, ensuring that the test measures what it is supposed to measure consistently over time.
+
+  \item \textbf{Usability Studies:} They can evaluate the relationship between different usability metrics, such as time on task and error rates, to understand user behavior better.
+\end{enumerate}
+
+It's important to note that while correlation coefficients can indicate the presence of a relationship, they do not imply causation. Additionally, they are sensitive to outliers, which can disproportionately influence the results. Thus, they should be used alongside other statistical methods to provide a comprehensive evaluation.
+
+\section{Q8.5 Describe under what circumstance correlation can be used to assess validity of evaluation metrics}
+
+Correlation is particularly useful for assessing the validity of evaluation metrics in tasks lacking a clear ground truth. It is applicable in situations such as:
+
+\begin{itemize}
+\item SoTA - benchmarking in competitions, where metrics should correlate with expert evaluations to rank participants accurately.
+\item Grammar checking. ($\beta$ value)
+\item Validating new metrics against established ones to ensure they measure similar constructs.
+\item Tasks with subjective assessments, like sentiment analysis, where metrics should correlate with human intuition.
+\item Ensuring consistency of a metric across different datasets or conditions to confirm its reliability.
+\end{itemize}
+
+In these cases, high correlation with human judgment or between different evaluation metrics indicates that the metrics are capturing aspects of performance that are consistent with human evaluation or other reliable metrics.
+
+\section{Q8.6 Define Cohen's \(\kappa\) and explain what it is used for when preparing data for machine learning}
+
+Cohen's kappa coefficient (\(\kappa\)) is a statistical measure used to evaluate the inter-annotator agreement for qualitative (categorical) items. It is defined as:
+
+\[
+\kappa = \frac{p_o - p_e}{1 - p_e}
+\]
+
+where \( p_o \) is the relative observed agreement among raters, and \( p_e \) is the hypothetical probability of chance agreement. 
+
+This metric is utilized in machine learning to assess the consistency of annotations provided by different human experts. It serves multiple purposes:
+
+\begin{itemize}
+  \item \textbf{Data Reliability:} Ensures that the data labels used for training machine learning models are consistent and reliable.
+  \item \textbf{Annotator Performance:} Helps in evaluating the performance of annotators and can be used to filter out unreliable annotations.
+  \item \textbf{Cultural Insights:} Low values of \(\kappa\) might indicate cultural differences or subjectivity in the data, providing insights into potential biases.
+  \item \textbf{Model Benchmarking:} Sets a benchmark for machine learning performance, as achieving high accuracy beyond IAA is often unrealistic and might indicate overfitting or data leakage.
+\end{itemize}
+
+By quantifying the agreement level, Cohen's kappa allows for more informed decisions in the data curation process, ultimately leading to the development of more robust machine learning models.
+
+\section{Q8.7 Considering an averaging ensemble of M models, prove the relation between the average mean squared error of the ensemble and the average error of the individual models, assuming the model errors have zero means and are uncorrelated}
+
+Let \( y_i(x) \) be the prediction of model \( i \) for an input \( x \) with true target \( t \), and \( \varepsilon_i(x) \) be the error of model \( i \) such that \( y_i(x) = t + \varepsilon_i(x) \). The mean squared error (MSE) of model \( i \) is:
+
+\[
+\mathbb{E}\left[\left(y_i(x) - t\right)^2\right] = \mathbb{E}\left[\varepsilon_i^2(x)\right].
+\]
+
+For an ensemble of \( M \) models, the ensemble prediction is the average of individual predictions:
+
+\[
+y_{\text{ensemble}}(x) = \frac{1}{M} \sum_{i=1}^{M} y_i(x).
+\]
+
+The MSE of the ensemble is then:
+
+\[
+\mathbb{E}\left[\left(y_{\text{ensemble}}(x) - t\right)^2\right] = \mathbb{E}\left[\left(\frac{1}{M} \sum_{i=1}^{M} \varepsilon_i(x)\right)^2\right].
+\]
+
+Assuming that errors \( \varepsilon_i(x) \) are uncorrelated and have zero means, we have:
+
+\[
+\mathbb{E}\left[\varepsilon_i(x)\varepsilon_j(x)\right] = 0 \quad \text{for} \quad i \neq j.
+\]
+
+Therefore, the MSE of the ensemble simplifies to:
+
+\[
+\mathbb{E}\left[\left(\frac{1}{M} \sum_{i=1}^{M} \varepsilon_i(x)\right)^2\right] = \frac{1}{M^2} \mathbb{E}\left[\sum_{i=1}^{M} \varepsilon_i^2(x)\right] + \frac{1}{M^2} \sum_{i, j} \mathbb{E}\left[\varepsilon_i(x)\varepsilon_j(x)\right] \\
+= \frac{1}{M}\mathbb{E}\left[\frac{1}{M}\sum_{i}\varepsilon_{i}^{2}(x)\right],
+\]
+
+Hence, the average MSE of the ensemble is \( \frac{1}{M} \) times the average MSE of the individual models.
+
+\section{Q8.8 Explain knowledge distillation: what it is used for, describe how it is done}
+
+Knowledge distillation is a process of transferring knowledge from a large or complex model (teacher) to a smaller model (student). It is especially useful for deploying deep learning models on devices with limited computational power.
+
+The algorithm for knowledge distillation is as follows:
+\begin{enumerate}
+    \item Train a large model or ensemble of models on a dataset to create the teacher model.
+    \item Use the trained teacher model to generate soft target distributions (also known as pseudolikelihood) for each instance in the dataset.
+    \item Train the student model to mimic the output distribution of the teacher model by using a loss function that compares the soft targets with the predictions of the student model.
+\end{enumerate}
+
+The intuition behind knowledge distillation is that the probability distribution output by the teacher model provides a richer signal than a one-hot encoded target, as it contains information about the relationships between different classes. This rich signal can be used to train the student model more effectively.
+
+\part{Lecture 9}
+
+\section{Q9.1 In a regression decision tree, state what values are kept in internal nodes, define the squared error criterion and describe how is a leaf split during training (without discussing splitting constraints)}
+
+In a regression decision tree, the internal nodes represent the feature and the corresponding threshold used to split the data, while the leaves store the predicted value for the target variable. The predicted value at each leaf is the average of the target values of the samples that fall into that leaf.
+
+The squared error criterion \( C_{SE} \) for a node \( T \) is defined as:
+\[
+C_{SE}(T) = \sum_{i \in I_T} (t_i - \bar{t}_T)^2,
+\]
+where \( \bar{t}_T \) is the average of the target values \( t_i \) for the samples at node \( T \), and \( I_T \) is the set of sample indices that belong to node \( T \).
+
+During training, a leaf is split by selecting the feature and the threshold that minimize the summed squared error criterion of the resulting child nodes. This is achieved by:
+\begin{enumerate}
+    \item Iterating over all features and all possible thresholds for each feature.
+    \item Splitting the node into two child nodes \( T_L \) and \( T_R \) based on the selected feature and threshold.
+    \item Calculating the decrease in the squared error criterion due to the split.
+    \item Choosing the split that results in the largest decrease in the squared error criterion.
+\end{enumerate}
+The process continues recursively until a stopping criterion is met, which could be a maximum depth of the tree, a minimum number of samples in a leaf, or a minimal improvement to the criterion.
+
+\section{Q9.2 In a K-class classification decision tree, state what values are kept in internal nodes, define the Gini index and describe how is a node split during training (without discussing splitting constraints)}
+
+In a classification decision tree for \( K \) classes, internal nodes represent the decision criteria, which consist of a feature and a threshold that is used to split the data into two child nodes.
+
+The Gini index, also known as Gini impurity, is a measure used to quantify the purity of a node. It is defined for a node \( T \) as:
+\[
+C_{\text{Gini}}(T) = |I_T| \sum_{k=1}^K p_T(k) (1 - p_T(k)),
+\]
+where \( p_T(k) \) is the proportion of samples of class \( k \) in node \( T \), and \( I_T \) is the set of indices of samples that fall into node \( T \).
+
+During training, a node is split by selecting the feature and the threshold that produce child nodes with the lowest combined Gini index. The process is as follows:
+\begin{enumerate}
+    \item Iterate over all features and thresholds.
+    \item Calculate the Gini index for child nodes resulting from each potential split.
+    \item Select the feature and threshold that minimize the weighted sum of the Gini indices of the child nodes.
+\end{enumerate}
+This process recursively continues down the tree until a stopping criterion is reached, such as a maximum depth or a minimum node size.
+
+\section{Q9.3 In a K-class classification decision tree, state what values are kept in internal nodes, define the entropy criterion and describe how is a node split during training (without discussing splitting constraints)}
+
+
+In a \( K \)-class classification decision tree, the internal nodes hold the decision rules, typically a feature and a threshold that partitions the dataset into subsets.
+
+The entropy criterion for a node \( T \), often used as a measure of impurity or disorder within the node, is defined as:
+
+\[
+C_{\text{entropy}}(T) = -|I_T| \sum_{\substack{k=1 \\ p_T(k) \neq 0}}^K p_T(k) \log p_T(k),
+\]
+
+where \( p_T(k) \) represents the proportion of class \( k \) instances within node \( T \), and \( |I_T| \) is the number of instances in node \( T \).
+
+The process of splitting a node during training involves:
+
+\begin{enumerate}
+    \item For each feature, calculate the potential splits and the resulting entropy.
+    \item The split that results in the largest decrease in entropy (highest information gain) is chosen.
+    \item This process is recursively applied to each new node until the stopping criteria are met.
+\end{enumerate}
+
+\section{Q9.4 For binary classification, derive the Gini index from a squared error loss}
+
+
+Consider a binary classification setting with a set of training examples belonging to a leaf node \( T \). Let \( n_T(0) \) denote the number of examples with target value 0, \( n_T(1) \) the number of examples with target value 1, and \( p_T \) the proportion of examples with target value 1 in \( T \), i.e., \( p_T = \frac{n_T(1)}{n_T(0) + n_T(1)} \).
+
+The squared error loss \( L(p) \) for a prediction \( p \) is defined as:
+\[
+L(p) = \sum_{i \in I_T} (p - t_i)^2,
+\]
+where \( t_i \) is the target value for the \( i \)-th example.
+
+Minimizing the squared error loss, we find that the optimal prediction \( p \) is the average target value in \( T \), i.e., \( p = p_T \). The loss for this prediction is:
+\[
+L(p_T) = \sum_{i \in I_T} (p_T - t_i)^2 = n_T(0)\textcolor{blue}{(p_T - 0)^2} + \textcolor{pink}{n_T(1)(p_T - 1)^2}.
+\]
+
+Expanding the terms, we get:
+\begin{equation}
+\begin{aligned}
+&= \frac{n_T(0)\textcolor{blue}{n_T(1)^2}}{\textcolor{blue}{(n_T(0) + n_T(1))^2}} + \frac{n_T(1)\textcolor{pink}{n_T(0)^2}}{\textcolor{pink}{(n_T(0) + n_T(1))^2}} \\
+&= \frac{{(n_T(1))} + {n_T(0))}\textcolor{green}{n_T(0)}\textcolor{red}{n_T(1)}}{\textcolor{green}{n_T(0) + n_T(1)}\textcolor{red}{n_T(0) + n_T(1)}}\\
+&= ({n_T(0) + n_T(1)})\textcolor{green}{(1 - {p_T})}\textcolor{red}{p_T} = |T| \cdot p_T(1 - {p_T}).
+\end{aligned}
+\end{equation}
+    
+which is proportional to the Gini impurity measure \( G(T) = 2p_T(1 - p_T) \) for a binary classification.
+
+\section{Q9.5 For KK-class classification, derive the entropy criterion from a non-averaged NLL loss}
+
+Given a set of training examples \(I_T\) corresponding to a leaf node \(T\) in a decision tree for K-class classification, let \(n_T(k)\) denote the count of examples in \(T\) with target class \(k\). The probability of class \(k\) in \(T\) is given by \(p_T(k) = \frac{n_T(k)}{|I_T|}\).
+
+The non-averaged negative log-likelihood loss for a distribution \(p\) over \(K\) classes is defined as:
+\[
+L(p) = \sum_{i \in I_T} -\log p_{t_i},
+\]
+where \(p_{t_i}\) is the predicted probability of the true class \(t_i\) for the \(i\)-th example.
+
+To minimize the NLL loss, we take its derivative with respect to \(p_k\) and set it to zero, subject to the constraint \(\sum_k p_k = 1\). This yields the minimizing condition \(p_k = p_T(k)\).
+
+The value of the loss with respect to \(p_T\) then simplifies to:
+\[
+L(p_T) = \sum_{i \in I_T} -\log p_{t_i} = -\sum_{k: p_T(k) \neq 0} n_T(k) \log p_T(k).
+\]
+
+Using the definition of entropy \(H(p_T)\) for the distribution \(p_T\), we have:
+\[
+H(p_T) = -\sum_{k: p_T(k) \neq 0} p_T(k) \log p_T(k),
+\]
+which implies that the NLL loss is equal to the size of \(I_T\) times the entropy of \(p_T\):
+\[
+L(p_T) = |I_T| \cdot H(p_T).
+\]
+
+This concludes the derivation, showing that minimizing the non-averaged NLL loss is equivalent to minimizing the entropy of the predicted class distribution within a leaf node of a decision tree.
+
+\section{Q9.6 Describe how is a random forest trained (including bagging and a random subset of features) and how is prediction performed for regression and classification}
+
+A random forest is an ensemble learning method that operates by constructing a multitude of decision trees during training and outputting the class that is the mode of the classes (classification) or mean prediction (regression) of the individual trees.
+
+\subsection*{Training}
+
+The training process involves the following steps:
+
+\begin{enumerate}
+  \item \textbf{Bootstrap Aggregating (Bagging):} For each tree, a bootstrap sample is drawn from the training data. This means that for a training set of size \( N \), \( M \) samples are drawn with replacement to form a training set for the tree.
+  
+  \item \textbf{Random Feature Selection:} When splitting nodes during the construction of the trees, instead of searching for the best split among all features, a random subset of features is selected, and the best split is found within this subset. This introduces diversity among the trees and is key to the success of random forests.
+  
+  \item \textbf{Tree Construction:} Decision trees are constructed to the maximum depth without pruning. Each tree is grown on a different bootstrap sample of the data, and at each node, a different random subset of features is considered for splitting.
+  
+  \item \textbf{Ensemble Creation:} Steps 1 to 3 are repeated to create a forest of decision trees, typically ranging from tens to hundreds of trees.
+\end{enumerate}
+
+\subsection*{Prediction}
+
+For prediction, the responses from all trees in the forest are aggregated:
+
+\begin{itemize}
+  \item \textbf{Regression:} The final prediction is the average of the predictions from all individual trees.
+  
+  \item \textbf{Classification:} Each tree gives a vote for the class, and the class receiving the majority of votes becomes the model's prediction. In the case of a tie, one class may be randomly selected, or the tie may be broken based on the class distributions.
+\end{itemize}
+
+The random forest algorithm leverages the power of multiple decision trees to reduce variance and avoid overfitting, providing robust predictions for both regression and classification tasks.
+
+\part{Lecture 10}
+
+\section{Q10.1 Write down the loss function which we optimize in gradient boosted decision trees during the construction of $t^{th}$ tree. Then define $g_i$ and $h_i$ and show the value $w_T$ of optimal prediction in node T and the criterion used during node splitting}
+
+During the construction of the $t^{\text{th}}$ tree in gradient boosting, we optimize the following loss function:
+
+\begin{align*}
+E^{(t)}(w_t; w_{1..t-1}) = \sum_{i} \left[ \ell(t_i, y^{(t-1)}(x_i; w_{1..t-1}) + y_t(x_i; w_t)) \right] + \frac{1}{2}\lambda \|w_t\|^2 \\
+\approx \sum_{i} \left[ \ell (t_i, y^{(t-1)}(\mathbf{x}_i)) + g_i \cdot y_t(\mathbf{x}_i) + \frac{1}{2} h_i \cdot y_t^2(\mathbf{x}_i) \right] + \frac{\lambda}{2} \Vert \mathbf{w} \Vert^2.
+\end{align*}
+
+Here, $g_i$ and $h_i$ are defined as the first and second order gradients of the loss function with respect to the prediction at step $t-1$, specifically:
+
+\begin{equation}
+g_i = \frac{\partial \ell(t_i, y)}{\partial y} \bigg|_{y = y^{(t-1)}(\mathbf{x}_i)}
+\end{equation}
+\begin{equation}
+h_i = \frac{\partial^2 \ell(t_i, y)}{\partial y^2} \bigg|_{y = y^{(t-1)}(\mathbf{x}_i)}.
+\end{equation}
+
+The optimal prediction value $w_T$ for a node $T$ is given by:
+
+\begin{equation}
+w_T^* = - \frac{\sum_{i \in I_T} g_i}{\lambda + \sum_{i \in I_T} h_i},
+\end{equation}
+
+where $I_T$ denotes the set of instance indices in node $T$. During node splitting, we seek to maximize the gain from the split, which is computed using these gradients.
+
+\section{Criterion for Node Splitting}
+
+The splitting criterion in gradient boosting is based on maximizing the gain $G$, which is calculated as follows:
+
+\begin{equation}
+G = \frac{1}{2} \left[ \frac{(\sum_{i \in I_L} g_i)^2}{\lambda + \sum_{i \in I_L} h_i} + \frac{(\sum_{i \in I_R} g_i)^2}{\lambda + \sum_{i \in I_R} h_i} - \frac{(\sum_{i \in I_T} g_i)^2}{\lambda + \sum_{i \in I_T} h_i} \right] - \gamma,
+\end{equation}
+
+where $I_L$ and $I_R$ are the sets of instance indices for the left and right splits from node $T$, and $\gamma$ is a regularization parameter to penalize the complexity of the model.
+
+\section{Q10.2 For a K-class classification, describe how to perform prediction with a gradient boosted decision tree trained for T time steps (how the individual trees perform prediction and how are the KT trees combined to produce the predicted categorical distribution)}
+
+In a \( K \)-class classification task using gradient boosted decision trees, prediction after \( T \) timesteps is performed as follows. Each timestep \( t \) involves training \( K \) trees, denoted as \( w_{t,k} \), with each tree predicting a value for one of the \( K \) classes. Prediction for an instance \( \mathbf{x}_i \) is made by summing the outputs of all trees corresponding to each class across all timesteps and then applying the softmax function to these sums to obtain the predicted probabilities for each class:
+
+\begin{equation}
+\text{softmax}(\mathbf{y}(\mathbf{x}_i)) = \text{softmax} \left( \sum_{t=1}^{T} y_{t,1}(\mathbf{x}_i; w_{t,1}), \ldots, \sum_{t=1}^{T} y_{t,K}(\mathbf{x}_i; w_{t,K}) \right),
+\end{equation}
+
+where \( y_{t,k}(\mathbf{x}_i; w_{t,k}) \) is the output of the \( k \)-th tree at timestep \( t \) for instance \( \mathbf{x}_i \). The predicted categorical distribution for instance \( \mathbf{x}_i \) is then the output of the softmax function, which provides a probability distribution over the \( K \) classes.
+
+\section{Q10.3 What type of data are gradient boosted decision trees good for as opposed to multilayer perceptron? Explain the intuition why it is the case}
+
+
+Gradient boosted decision trees (GBDTs) are optimal for structured, tabular data where input features have high predictive power and clear interpretability. They can capture non-linear relationships and feature interactions without extensive preprocessing.
+
+\begin{itemize}
+    \item Good for lower-dimensional data with meaningful features.
+    \item Handles mixed data types (continuous, categorical).
+    \item Requires less data preprocessing.
+\end{itemize}
+
+Multilayer perceptrons (MLPs), or neural networks, are better suited for high-dimensional data such as images or text. They excel in learning hierarchical feature representations, essential in domains where raw features are not individually informative.
+
+\begin{itemize}
+    \item When one feature does not mean much alone.
+    \item Ideal for high-dimensional data (images, text).
+    \item Capable of complex feature extraction.
+    \item Benefits from pre-trained networks.
+\end{itemize}
+
+The choice of model depends on the dataset characteristics and the problem at hand.
+
+\part{Lecture 11}
 
 \end{document}
 
