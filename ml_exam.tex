@@ -21,6 +21,7 @@
 % For adding links
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{titlesec}
 
 \title{Machine Learning Exam Notes}
 \author{Tomáš Jelínek}
@@ -29,6 +30,11 @@
 \begin{document}
 
 \maketitle
+
+\setcounter{secnumdepth}{0}
+
+\titleformat{\section}[block]{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}[block]{\large\bfseries}{\thesubsection}{1em}{}
 
 \tableofcontents
 
