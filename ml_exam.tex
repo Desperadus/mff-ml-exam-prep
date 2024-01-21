@@ -36,6 +36,7 @@
 
 \section{Disclaimer}
 These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2324-winter#home}{Introduction to Machine Learning with Python} in winter semester 2023/24 which are under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
+
 Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were used in the proccess of writing this document.
 
 \section{License}
@@ -1565,7 +1566,401 @@ Multilayer perceptrons (MLPs), or neural networks, are better suited for high-di
 The choice of model depends on the dataset characteristics and the problem at hand.
 
 \part{Lecture 11}
+\section{Q11.1 Formulate SVD decomposition of matrix XX, describe properties of individual parts of the decomposition. Explain what the reduced version of SVD is}
 
+Given a matrix \( X \in \mathbb{R}^{m \times n} \), the singular value decomposition (SVD) of \( X \) is a factorization of the form:
+
+\[
+X = U\Sigma V^T
+\]
+
+where:
+
+\begin{itemize}
+  \item \( U \in \mathbb{R}^{m \times m} \) is an orthogonal matrix whose columns are the left singular vectors of \( X \),
+  \item \( \Sigma \in \mathbb{R}^{m \times n} \) is a diagonal matrix with non-negative real numbers on the diagonal known as singular values, sorted in descending order,
+  \item \( V \in \mathbb{R}^{n \times n} \) is an orthogonal matrix whose columns are the right singular vectors of \( X \).
+\end{itemize}
+
+\textbf{Properties:}
+
+\begin{itemize}
+  \item The columns of \( U \) and \( V \) are orthonormal bases for the column space and row space of \( X \), respectively.
+  \item The non-zero singular values in \( \Sigma \) are the square roots of the non-zero eigenvalues of both \( X^TX \) and \( XX^T \).
+\end{itemize}
+
+\textbf{Reduced SVD:}
+
+The reduced version of SVD is used when we want to approximate \( X \) by a matrix of lower rank \( k \), which is less than the original rank \( r \). It can be expressed as:
+
+\[
+\tilde{X} = U_k \Sigma_k V_k^T
+\]
+
+where \( U_k \) and \( V_k \) contain only the first \( k \) columns of \( U \) and \( V \), and \( \Sigma_k \) contains only the top \( k \) singular values. This approximation minimizes the Frobenius norm \( \|X - \tilde{X}\|_F \) among all rank-\( k \) approximations.
+
+\section{Q11.2 Formulate the Eckart-Young theorem}
+
+The Eckart-Young theorem states that given a matrix \( X \in \mathbb{R}^{n \times m} \) and its Singular Value Decomposition (SVD), the best rank-\( k \) approximation \( X_k \) of \( X \) in terms of the Frobenius norm is obtained by retaining the first \( k \) singular values and corresponding singular vectors. Formally:
+
+\[
+X_k = \sigma_1 u_1 v_1^T + \ldots + \sigma_k u_k v_k^T
+\]
+
+where \( \sigma_i \) are the singular values, and \( u_i \), \( v_i \) are the left and right singular vectors, respectively. This approximation minimizes the Frobenius norm of the difference between \( X \) and \( X_k \):
+
+\[
+\| X - X_k \|_F \leq \| X - B \|_F
+\]
+
+for any \( B \in \mathbb{R}^{n \times m} \) of rank \( k \). The Frobenius norm is the square root of the sum of the absolute squares of its elements, and it can also be expressed as the square root of the trace of \( X^T X \). It has the important property that multiplying by an orthonormal matrix does not change the norm:
+
+\[
+\| U A \|_F = \sqrt{\text{trace}((UA)^T UA)} = \sqrt{\text{trace}(A^T U^T U A)} = \sqrt{\text{trace}(A^T A)} = \| A \|_F
+\]
+
+The norm is invariant under orthogonal transformations, and the best strategy to approximate \( X \) while preserving most of its norm is to remove the smallest singular values.
+
+\section{Q11.3 Explain how to compute the PCA of dimension M using the SVD decomposition of a data matrix X, and why it works}
+
+Principal Component Analysis (PCA) can be computed using Singular Value Decomposition (SVD) of the data matrix \( X \). For a data matrix \( X \in \mathbb{R}^{n \times m} \), where each row is a data point and each column is a feature, PCA is performed as follows:
+
+\begin{enumerate}
+    \item Center the data by subtracting the mean of each feature from the data matrix, resulting in the mean-centered matrix \( \tilde{X} = X - \bar{x} \).
+    \item Compute the SVD of \( \tilde{X} \), which is given by \( \tilde{X} = U\Sigma V^T \).
+    \item The columns of \( V \) (right singular vectors) correspond to the principal components of \( X \).
+    \item To reduce the dimensionality to \( M \), select the first \( M \) columns of \( V \), and the first \( M \) singular values from \( \Sigma \).
+    \item The projection of \( X \) onto the \( M \)-dimensional subspace is given by \( X_M = X V_M \), where \( V_M \) is the matrix containing the first \( M \) columns of \( V \).
+\end{enumerate}
+
+This works because the singular values in \( \Sigma \) represent the amount of variance captured by each principal component, and the columns of \( V \) are the directions along which the variance is maximized. By taking the first \( M \) components, we retain the features that capture the most variance in the data.
+
+\[
+\| \mathbf{X} - \bar{\mathbf{x}} \|_F^2 = \text{trace} \left( (\mathbf{X} - \bar{\mathbf{x}})^T (\mathbf{X} - \bar{\mathbf{x}}) \right) = N \sum_{i=1}^{D} \text{Var}(\mathbf{X}_{:,i})
+\]
+
+Approximating the matrix in terms of Frobenius norm means keeping the most variance from the data. Components are ordered by how much variability in the data they capture.
+
+\[
+\begin{gathered}
+\text{Let } \mathbf{S} = \frac{1}{N} (\mathbf{X} - \bar{\mathbf{x}})^T (\mathbf{X} - \bar{\mathbf{x}}), \\
+\text{then PCA of } \mathbf{X} \text{ involves the eigenvectors of } \mathbf{S}, \\
+\text{denoted by the } \mathbf{V} \text{ matrix in the SVD of } \mathbf{X} - \bar{\mathbf{x}}.
+\end{gathered}
+\]
+
+\section{Q11.4 Given a data matrix X, write down the algorithm for computing the PCA of dimension M using the power iteration algorithm}
+
+Given a data matrix \( X \), the PCA of dimension \( M \) can be computed using the power iteration algorithm as follows:
+
+\begin{enumerate}
+    \item Center the data matrix \( X \) by subtracting the mean \( \mu \) of each feature.
+    \item Compute the covariance matrix \( S \) as \( S = \frac{1}{N} (X - \mu)^T(X - \mu) \).
+    \item For each dimension \( i \) from 1 to \( M \):
+    \begin{enumerate}
+        \item Initialize a random vector \( v_i \).
+        \item Repeat until convergence (or a fixed number of iterations):
+        \begin{enumerate}
+            \item Compute \( v_i = Sv_i \).
+            \item Normalize \( \lambda_i = \|v_i\| \).
+            \item Compute \( v_i = \frac{v_i}{\lambda_i} \).
+        \end{enumerate}
+        \item Deflate \( S \) by subtracting the outer product of \( v_i \) with itself, scaled by its eigenvalue: \( S = S - \lambda_i v_i v_i^T \).
+    \end{enumerate}
+    \item Construct the matrix \( V \) with columns \( v_1, v_2, \ldots, v_M \) as the principal components.
+    \item Project the data onto the new subspace: \( X_{\text{PCA}} = XV \).
+\end{enumerate}
+
+This algorithm computes the top \( M \) principal components by iteratively finding the direction of maximum variance (eigenvector) and deflating the covariance matrix to remove this variance before finding the next component.
+
+\section{Q11.5 Describe the K-means algorithm, including the kmeans++ initialization}
+
+K-Means is a clustering algorithm that partitions \( N \) data points into \( K \) clusters. Each cluster is defined by its centroid \( \mu_k \), which is the mean of the points assigned to the cluster. The objective is to minimize the within-cluster sum of squares.
+
+Let \( \mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N \) be a collection of \( N \) input examples, each being a \( D \)-dimensional vector \( \mathbf{x}_i \in \mathbb{R}^D \). Let \( K \), the number of target clusters, be given.
+
+Let \( z_{i,k} \in \{0, 1\} \) be binary indicator variables describing whether an input example \( \mathbf{x}_i \) is assigned to cluster \( k \), and let each cluster be specified by a point \( \mu_1, \ldots, \mu_K \), usually called the cluster center.
+
+Our objective function \( J \), which we aim to minimize, is
+
+\[ J = \sum_{i=1}^{N} \sum_{k=1}^{K} z_{i,k} \|\mathbf{x}_i - \mu_k\|^2. \]
+
+\subsection*{Algorithm}
+
+\begin{enumerate}
+    \item \textbf{Initialization: K-means++}
+    \begin{enumerate}
+        \item Choose one data point uniformly at random as the first cluster center \( \mu_1 \).
+        \item For each data point \( x_i \), compute \( D(x_i) \), the distance between \( x_i \) and the nearest cluster center that has already been chosen.
+        \item Choose one new data point at random as a new cluster center, using a weighted probability distribution where a point \( x_i \) is chosen with probability proportional to \( D(x_i)^2 \).
+        \item Repeat steps ii and iii until \( K \) cluster centers have been chosen.
+    \end{enumerate}
+    \item \textbf{Assignment step:} Assign each data point to the nearest centroid.
+    \[ z_{i,k} = 
+    \begin{cases} 
+    1 & \text{if } k = \arg\min_j \| x_i - \mu_j \|^2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item \textbf{Update step:} Recalculate centroids as the mean of all points assigned to that centroid.
+    \[ \mu_k = \frac{\sum_{i=1}^N z_{i,k}x_i}{\sum_{i=1}^N z_{i,k}} \]
+    \item Repeat steps 2 and 3 until the centroids no longer change significantly or a maximum number of iterations is reached.
+\end{enumerate}
+
+The K-means++ initialization helps to ensure that the initial centroids are as far from each other as possible, leading to better and faster convergence of the algorithm.
+
+\part{Lecture 12}
+
+\section{Q12.1 Considering statistical hypothesis testing, define type I errors and type II errors (in terms of the null hypothesis). Finally, define what a significance level is}
+
+In hypothesis testing, we begin with a null hypothesis, $H_0$, which is a statement we assume to be true until evidence suggests otherwise. An alternative hypothesis, $H_1$, is considered if there is sufficient evidence against $H_0$.
+
+\subsection*{Type I and Type II Errors}
+
+\begin{itemize}
+    \item \textbf{Type I Error}: Also known as a false positive, occurs when $H_0$ is true, but we incorrectly reject it.
+    \item \textbf{Type II Error}: Also known as a false negative, occurs when $H_0$ is false, but we fail to reject it.
+\end{itemize}
+
+The probability of making a Type I error is denoted by $\alpha$, and is known as the significance level of the test. It is the threshold below which we reject $H_0$, commonly set at 5\%.
+
+\subsection*{Significance Level}
+
+The significance level $\alpha$ is the probability of rejecting the null hypothesis $H_0$ when it is actually true. It defines the sensitivity of our hypothesis test.
+
+\[
+    \alpha = P(\text{Type I Error}) = P(\text{Reject } H_0 | H_0 \text{ is true})
+\]
+
+The lower the value of $\alpha$, the less likely we are to make a Type I error, but the higher the chance of a Type II error.
+
+\subsection*{Confusion Matrix}
+
+A confusion matrix helps to visualize the performance of a statistical test:
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+ & $H_0$ True & $H_1$ True \\
+\hline
+Reject $H_0$ & Type I Error (False Positive) & Correct Decision (True Positive) \\
+\hline
+Fail to Reject $H_0$ & Correct Decision (True Negative) & Type II Error (False Negative) \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Q12.2 Explain what a test statistic and a p-value are}
+
+\subsection*{Test Statistic}
+A \textbf{test statistic} is a standardized value derived from sample data during a hypothesis test. It is calculated to assess the strength of the evidence against the null hypothesis. Mathematically, it can be represented as:
+\[ T = \frac{\text{Sample Estimate} - \text{Population Parameter}}{\text{Standard Error}} \]
+It quantifies how far our sample statistic deviates from what we would expect if the null hypothesis $H_0$ were true, under the assumption of the null hypothesis.
+
+\subsection*{P-value}
+The \textbf{p-value} is the probability of obtaining a test statistic at least as extreme as the one actually observed, given that the null hypothesis is true. It is a measure of the evidence against the null hypothesis provided by the sample. A smaller p-value indicates stronger evidence against $H_0$. It is given by:
+\[ p\text{-value} = P(T \geq t | H_0 \text{ is true}) \]
+for a right-tailed test, or 
+\[ p\text{-value} = P(T \leq t | H_0 \text{ is true}) \]
+for a left-tailed test, or
+\[ p\text{-value} = P(|T| \geq |t| | H_0 \text{ is true}) \]
+for a two-sided symmetric test.
+where $t$ is the observed value of the test statistic.
+
+A p-value less than the chosen significance level $\alpha$ (commonly 0.05) leads to the rejection of the null hypothesis.
+
+\section{Q12.3 Write down the steps of a statistical hypothesis test, including a definition of a p-value}
+
+The procedure for performing a statistical hypothesis test is as follows:
+
+\begin{enumerate}
+    \item Formulate the null hypothesis \(H_0\), which is a statement of no effect or no difference, and optionally the alternative hypothesis \(H_1\), which is what you aim to support.
+    \item Choose the appropriate test statistic that will measure the degree of agreement between the sample data and the null hypothesis.
+    \item Compute the observed value of the test statistic from the sample data.
+    \item Calculate the p-value, which is the probability of observing a test statistic as extreme as, or more extreme than, the observed value, assuming the null hypothesis is true.
+    \item Decide whether to reject or not reject the null hypothesis by comparing the p-value to the chosen significance level \(\alpha\). Common choices for \(\alpha\) include 5\%, 1\%, 0.5\%, or 0.1\%. If the p-value is less than or equal to \(\alpha\), reject \(H_0\); otherwise, do not reject \(H_0\).
+\end{enumerate}
+
+\subsection*{P-value Definition}
+The p-value is defined as the probability of obtaining a test statistic at least as extreme as the one that was actually observed, under the assumption that the null hypothesis is true. It is used as a tool to decide whether to reject or not reject the null hypothesis. More detailed explanation in Q12.2.
+
+\section{Q12.4 Explain the differences between a one-sample test, two-sample test, and a paired test}
+
+\begin{itemize}
+    \item \textbf{One-sample test:} This test is used when we want to compare the sample mean from a single group to a known value or theoretical expectation. Common applications include testing whether the mean of a single distribution is equal to, greater than, or less than a certain value, or performing goodness of fit tests to determine if the data come from a specified distribution.
+
+    \item \textbf{Two-sample test:} This type of test is applicable when two independent samples are taken from different populations, and we want to compare their means. The key assumption is that the two samples are independent of each other.
+
+    \item \textbf{Paired test:} Paired tests are used when the samples are not independent but are paired in some meaningful way. For example, measurements before and after a treatment on the same subjects, or the same subjects measured under two different conditions. The test involves computing the differences between the paired measurements and then performing a one-sample test on these differences.
+\end{itemize}
+
+In a one-sample test, the null hypothesis typically states that the mean of the distribution is equal to a target value. For two-sample tests, the null hypothesis commonly states that the means of the two populations are equal. In a paired test, the null hypothesis usually states that the mean difference between the paired observations is zero.
+
+\section{Q12.5 When considering multiple comparison problem, define the family-wise error rate, and prove the Bonferroni correction, which allows limiting the family-wise error rate by a given $\alpha$}
+
+\subsection*{Family-Wise Error Rate (FWER)}
+
+The family-wise error rate (FWER) is the probability of making one or more Type I errors when performing multiple hypotheses tests. Formally, for a family of $m$ hypotheses tests, the FWER is defined as:
+
+\[
+FWER = P\left(\bigcup_{i=1}^{m} (p_i \leq \alpha)\right)
+\]
+
+where $p_i$ is the p-value for the $i$-th hypothesis test and $\alpha$ is the significance level.
+
+\subsection*{Bonferroni Correction}
+
+The Bonferroni correction is a method to control the FWER. It involves adjusting the significance level $\alpha$ by the number of hypotheses $m$. The corrected significance level is $\alpha/m$.
+
+\paragraph{Proof:}
+
+Using the union bound (Boole's inequality), we have:
+
+\[
+FWER = P\left(\bigcup_{i=1}^{m} (p_i \leq \alpha)\right) \leq \sum_{i=1}^{m} P(p_i \leq \alpha)
+\]
+
+For independent tests, assuming a uniform distribution under the null hypothesis, the probability of a single test yielding a p-value less than $\alpha$ is exactly $\alpha$. With the Bonferroni correction, we have:
+
+\[
+P(p_i \leq \frac{\alpha}{m}) = \frac{\alpha}{m}
+\]
+
+Therefore, the sum of probabilities for $m$ independent tests is:
+
+\[
+\sum_{i=1}^{m} P(p_i \leq \frac{\alpha}{m}) = m \cdot \frac{\alpha}{m} = \alpha
+\]
+
+This proves that the Bonferroni correction ensures that the FWER is at most $\alpha$.
+
+\section{Q12.6 For a trained model and a given test set with N examples and metric E, write how to estimate $95\%$ confidence intervals using bootstrap resampling.}
+
+Given a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$, a trained model with predictions $\{ y(x_1), \ldots, y(x_N) \}$, and a performance metric $E$, we estimate the 95\% confidence intervals of the model's performance using bootstrap resampling as follows:
+
+\begin{enumerate}
+    \item Initialize an empty list called \textit{performances} to store the sampled performances.
+    \item Repeat $R$ times, where $R$ is a large number (commonly 1000 or more for better approximation):
+    \begin{enumerate}
+        \item Generate a bootstrap sample by sampling $N$ examples from the test set \textit{with replacement}.
+        \item For each sampled example, obtain the corresponding model prediction.
+        \item Compute the performance metric $E$ for the bootstrap sample.
+        \item Append the computed performance to the \textit{performances} list.
+    \end{enumerate}
+    \item Sort the list of \textit{performances}.
+    \item The 95\% confidence interval is estimated by selecting the 2.5th percentile as the lower bound and the 97.5th percentile as the upper bound from the sorted \textit{performances} list.
+\end{enumerate}
+
+Formally, the 95\% confidence interval $CI$ is given by:
+\[
+CI = \left( \textit{performances}\left[ \frac{R}{40} \right], \textit{performances}\left[ \frac{39R}{40} \right] \right)
+\]
+
+This interval estimates the range within which the true performance metric of the model lies with 95\% confidence.
+
+\section{Q12.7 For two trained models and a given test set with N examples and metric E, explain how to perform a paired bootstrap test that the first model is better than the other}
+
+
+Given a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$ and predictions from two models $\{y(x_1), \ldots, y(x_N)\}$ and $\{z(x_1), \ldots, z(x_N)\}$, we aim to test the hypothesis that the first model \(y\) performs better than the second model \(z\) using the paired bootstrap test with the following steps:
+
+\begin{enumerate}
+    \item Initialize an empty list called \textit{differences} to store the differences in performances.
+    \item For a number of resamplings \(R\), repeat:
+    \begin{enumerate}
+        \item Generate a bootstrap sample by sampling \(N\) examples from the test set \textit{with replacement}.
+        \item For each sampled example, obtain the corresponding predictions from both models \(y\) and \(z\).
+        \item Calculate the performance of both models on the sampled data using the metric \(E\).
+        \item Compute the difference in performance between the two models for each bootstrap sample and append it to the \textit{differences} list.
+    \end{enumerate}
+    \item The significance of the test is determined by the proportion of differences that are less than or equal to zero (indicating no improvement of model \(y\) over model \(z\)).
+    \item This proportion represents the estimated probability that model \(y\) is not better than model \(z\). If this proportion is small (typically less than a chosen significance level such as 0.05), we reject the null hypothesis and conclude that model \(y\) is significantly better than model \(z\).
+\end{enumerate}
+
+Unfortunately, the value returned by the algorithm is not really a p-value. The reason is that the distribution of differences was obtained \textbf{under the true distribution}. However, to perform the statistical test, we require the distribution of the test statistic \textbf{under the null hypothesis}. Nevertheless, you can encounter such paired bootstrap tests \textit{``in the wild''}.
+
+\section{Q12.8 For two trained models and a given test set with N examples and metric E, explain how to perform a random permutation test that the first model is better than the other with a significance level of $\alpha$}
+
+Given two trained models and a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$, with model predictions $\{y(x_1), \ldots, y(x_N)\}$ and $\{z(x_1), \ldots, z(x_N)\}$, we perform a random permutation test to determine if the first model is significantly better than the second at a significance level \( \alpha \) with the following algorithm:
+
+\begin{enumerate}
+    \item Initialize an empty list called \textit{differences} to store the differences in performance.
+    \item Repeat for a number of resamplings \( R \):
+    \begin{enumerate}
+        \item For each test set example, randomly permute the model predictions, effectively assigning the prediction of model \( y \) or model \( z \) to each test case.
+        \item Compute the performance of the permuted predictions using the metric \( E \).
+        \item Record the performance and append it to the list \textit{performances}.
+    \end{enumerate}
+    \item Return the ratio of the performances which are greater than or equal to the performance of the model $y$.
+    \item The p-value is then given by this proportion. If the p-value is less than or equal to the significance level \( \alpha \), we reject the null hypothesis that there is no difference in performance, suggesting that the first model is significantly better.
+\end{enumerate}
+
+(The calculation of the p-value is not exactly as I say here, because the algorithm actually returns $\beta$)
+
+\part{Lecture 13}
+
+
+\section{Explain the difference between deontological and utilitarian ethics. List examples on how these theoretical frameworks can be applied in machine learning ethics}
+
+\textbf{Deontological Ethics} focuses on the inherent nature of actions rather than their consequences. It emphasizes adherence to predefined rules and principles, such as the Universal Declaration of Human Rights, the Ten Commandments, or Kant's Categorical Imperative. In the context of machine learning (ML), it translates to principles like beneficence, non-malevolence, privacy, non-discrimination, autonomy, and informed consent.
+
+\textbf{Utilitarian Ethics}, on the other hand, is an ethical theory that emphasizes the maximization of overall happiness or well-being, thus focusing on the consequences of actions. It promotes actions that lead to the greatest overall positive impact.
+
+In ML ethics, \textbf{deontological frameworks} might lead to ethical problems in:
+\begin{itemize}
+    \item Problem definition: Some tasks may not align with fundamental ethical principles.
+    \item Data collection: Issues like privacy invasion or non-consensual data usage.
+    \item Model development: Ensuring models do not discriminate or violate user autonomy.
+\end{itemize}
+
+\textbf{Utilitarian frameworks} in ML ethics might consider:
+\begin{itemize}
+    \item Model evaluation: Metrics should account for overall happiness or harm reduction.
+    \item Model deployment: Using models in ways that maximize social good while minimizing potential harm or feedback loops that might disadvantage certain groups.
+\end{itemize}
+
+\textit{Examples:}
+\begin{itemize}
+    \item A deontological approach might reject any form of user data exploitation, even if it improves the performance of a recommendation system, on the principle of user autonomy.
+    \item A utilitarian approach may justify the use of personal data if the resulting system significantly benefits a large number of users, thereby increasing overall utility.
+\end{itemize}
+
+Both approaches have their merits and challenges when applied to ML ethics. Deontological ethics provide clear guidelines but can be rigid and may lead to conflicts between principles. Utilitarian ethics offer flexibility and quantifiability but may overlook individual rights and face difficulties in defining collective well-being.
+
+\section{Q13.2 List a few examples of potential ethical problems related to data collection}
+
+\begin{enumerate}
+    \item \textbf{Representation Bias}: Data may not be representative of the entire population, often excluding minorities or economically disadvantaged groups.
+    \item \textbf{Internet Data Misrepresentation}: Data collected from the internet might disproportionately represent the views and behaviors of those who have access and are more vocal online, skewing perceptions of the general population.
+    \item \textbf{Historical Bias}: Data reflecting past inequalities may perpetuate these biases when used to train modern machine learning systems.
+    \item \textbf{Exploitation in Crowdsourcing}: Individuals hired to collect or label data, often in low-income countries, may be underpaid and work under poor conditions, which could lead to monotonous work that causes psychological harm.
+    \item \textbf{Non-transparent Data Collection}: Users may unknowingly provide personal data when using online services, without a clear understanding or explicit consent of how their data will be used or the implications of its use.
+  \end{enumerate}
+  
+\section{Q13.3 List a few examples of potential ethical problems that can originate in model evaluation.}
+
+
+\begin{enumerate}
+    \item \textbf{Incomplete Metrics:} Evaluation metrics may not fully capture the desired outcomes. For instance, while translation fluency metrics may seem adequate, they might overlook ingrained gender biases.
+    \item \textbf{Macro-averaging Oversights:} Using macro-averaging in evaluation can obscure poor performance for specific user groups, often minorities, thus perpetuating discrimination.
+    \item \textbf{Human Resource Algorithms:} Employment recommendation systems optimized for precision may inadvertently discriminate based on gender, age, ethnicity, etc., since the system's recall—indicating the full scope of candidates, including potentially overlooked qualified individuals—is not visible.
+    \item \textbf{Data Mismatch:} When training and testing data do not align, minority languages could be disproportionately classified as hate speech or not safe for work, as highlighted in the paper "The Risk of Racial Bias in Hate Speech Detection" (Sap et al., ACL 2019).
+    \item \textbf{Feedback Loops:} Recommender systems can create feedback loops where predictions influence user behavior, which then feeds back into the training data. This can lead to echo chambers and self-affirmative groups. A notable example is how YouTube's recommendation algorithms facilitated the discovery of a category of home videos of scantily clad children by pedophiles.
+  \end{enumerate}
+  
+\part{The End}
+
+\section{Contributing}
+Github repo: \url{https://github.com/Desperadus/mff-ml-exam-prep}
+
+If you find any errors in this document, please create a pull request. Contributions are welcome!
+If you decide to do so feel free to add your name to the list of contributors below.
+
+
+
+\subsection{Contributors}
+%\begin{itemize}
+    %\item 
+%\end{itemize}
 \end{document}
 
 
