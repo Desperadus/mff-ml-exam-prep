@@ -547,7 +547,7 @@ where \( \|\mathbf{W}\|^2_F \) is the Frobenius norm of \( \mathbf{W} \), repres
 \subsection*{Gradient}
 The gradient of the loss function with L2 regularization is:
 \[
-\nabla_{\mathbf{W}} E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} (p(C_{t_i} | \mathbf{x}_i; \mathbf{W}) - 1_t) \mathbf{x}_i^T + \lambda \mathbf{W}
+\nabla_{\mathbf{W}} E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \mathbf{x}_i(softmax(x^T \mathbf{W}) - 1_t)^T + \lambda \mathbf{W}
 \]
 Note that $1_t$ is a one-hot vector with a 1 in the position corresponding to the target class $t$.
 
