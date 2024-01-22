@@ -1031,7 +1031,7 @@ I don't know mucb about this question, so this is what GPT-4 came up with:
 
 \part{Lecture 7}
 
-\section{Q7.1 Describe kk-nearest neighbors prediction, both for regression and classification. Define Lp norm and describe uniform, inverse, and softmax weighting. [10]}
+\section{Q7.1 Describe k-nearest neighbors prediction, both for regression and classification. Define Lp norm and describe uniform, inverse, and softmax weighting. [10]}
 
 \subsection*{Regression}
 For regression, k-NN predicts the target value by a weighted average of the targets of the k nearest neighbors:
@@ -1332,7 +1332,7 @@ Assuming that errors \( \varepsilon_i(x) \) are uncorrelated and have zero means
 Therefore, the MSE of the ensemble simplifies to:
 
 \[
-\mathbb{E}\left[\left(\frac{1}{M} \sum_{i=1}^{M} \varepsilon_i(x)\right)^2\right] = \frac{1}{M^2} \mathbb{E}\left[\sum_{i=1}^{M} \varepsilon_i^2(x)\right] + \frac{1}{M^2} \sum_{i, j} \mathbb{E}\left[\varepsilon_i(x)\varepsilon_j(x)\right] \\
+\mathbb{E}\left[\left(\frac{1}{M} \sum_{i=1}^{M} \varepsilon_i(x)\right)^2\right] = \frac{1}{M^2} \mathbb{E}\left[\left(\sum_{i=1}^{M} \varepsilon_i(x)\right)^2\right] + \frac{1}{M^2} \sum_{i, j} \mathbb{E}\left[\varepsilon_i(x)\varepsilon_j(x)\right] \\
 = \frac{1}{M}\mathbb{E}\left[\frac{1}{M}\sum_{i}\varepsilon_{i}^{2}(x)\right],
 \]
 
@@ -1438,7 +1438,7 @@ Expanding the terms, we get:
     
 which is proportional to the Gini impurity measure \( G(T) = 2p_T(1 - p_T) \) for a binary classification.
 
-\section{Q9.5 For KK-class classification, derive the entropy criterion from a non-averaged NLL loss. [20]}
+\section{Q9.5 For K-class classification, derive the entropy criterion from a non-averaged NLL loss. [20]}
 
 Given a set of training examples \(I_T\) corresponding to a leaf node \(T\) in a decision tree for K-class classification, let \(n_T(k)\) denote the count of examples in \(T\) with target class \(k\). The probability of class \(k\) in \(T\) is given by \(p_T(k) = \frac{n_T(k)}{|I_T|}\).
 
@@ -1567,7 +1567,7 @@ Multilayer perceptrons (MLPs), or neural networks, are better suited for high-di
 The choice of model depends on the dataset characteristics and the problem at hand.
 
 \part{Lecture 11}
-\section{Q11.1 Formulate SVD decomposition of matrix XX, describe properties of individual parts of the decomposition. Explain what the reduced version of SVD is. [10]}
+\section{Q11.1 Formulate SVD decomposition of matrix X, describe properties of individual parts of the decomposition. Explain what the reduced version of SVD is. [10]}
 
 Given a matrix \( X \in \mathbb{R}^{m \times n} \), the singular value decomposition (SVD) of \( X \) is a factorization of the form:
 
