@@ -547,7 +547,7 @@ where \( \|\mathbf{W}\|^2_F \) is the Frobenius norm of \( \mathbf{W} \), repres
 \subsection*{Gradient}
 The gradient of the loss function with L2 regularization is:
 \[
-\nabla_{\mathbf{W}} E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \mathbf{x}_i(softmax(x^T \mathbf{W}) - 1_t)^T + \lambda \mathbf{W}
+\nabla_{\mathbf{W}} E(\mathbf{W}) = -\frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} x_i(softmax(x_i^T \mathbf{W}) - 1_t)^T + \lambda \mathbf{W}
 \]
 Note that $1_t$ is a one-hot vector with a 1 in the position corresponding to the target class $t$.
 
@@ -1238,7 +1238,7 @@ Spearman's rank correlation coefficient, denoted by \(\rho\), is a nonparametric
 \rho = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)} = \frac{\text{cov}(R(X), R(Y))}{\sigma_{R(X)} \sigma_{R(Y)}}
 \]
 where \(d_i\) is the difference between the ranks of corresponding variables and \(n\) is the number of observations.
-Hence $d_i = rank(X_i) - rank(X_i)$
+Hence $d_i = rank(X_i) - rank(Y_i)$
 \subsection*{Kendall Rank Correlation Coefficient}
 Kendall rank correlation coefficient, denoted by \(\tau\), measures the ordinal association between two quantities. It is defined as:
 \[
