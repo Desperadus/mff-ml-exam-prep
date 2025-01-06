@@ -41,7 +41,7 @@
 \newpage
 
 \section{Disclaimer}
-These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2324-winter#home}{Introduction to Machine Learning with Python} in winter semester 2023/24 which are under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
+These notes are based on the lecture slides from NPFL129 course: \href{https://ufal.mff.cuni.cz/courses/npfl129/2425-winter#home}{Introduction to Machine Learning with Python} in winter semester 2024/25 which are under CC-BY-SA-4.0 license. The notes are not guaranteed to be correct and are not a substitute for the lecture. They are intended to be used as a study aid and should not be used as the only source of information for the exam.
 
 Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were used in the proccess of writing this document.
 
@@ -50,7 +50,11 @@ Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were u
 
 % Start writing your notes here
 \part{Lecture 1}
-\section{Q1.1 Explain why we need separate train and test data? What is generalization and how the concept relates to underfitting and overfitting? [10]}
+\section{Q1.1 Explain how reinforcement learning differs from supervised and unsupervised learning in terms of the type of input the learning algorithms use to improve model performance. [5]}
+
+TODO
+
+\section{Q1.2 Explain why we need separate train and test data? What is generalization and how the concept relates to underfitting and overfitting? [10]}
 
 \textbf{Why Separate Train and Test Data:}
 \begin{itemize}
@@ -73,7 +77,7 @@ Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were u
 
 
 
-\section{Q1.2 Define prediction function of a linear regression model and write down L2-regularized mean squared error loss. [10]}
+\section{Q1.3 Define prediction function of a linear regression model and write down $L^2$-regularized mean squared error loss. [10]}
 
 \textbf{Prediction Function:}
 Given an input vector \( x \in \mathbb{R}^D \), the prediction function \( f \) for linear regression is defined as:
@@ -90,7 +94,7 @@ L(w, b) = \frac{1}{2N} \sum_{i=1}^{N} (f(x_i; w) - t_i)^2 + \lambda \| w \|^2
 where \( t_i \) is the true target value for the \( i \)-th sample, \( \lambda \) is the regularization parameter, and \( \| w \|^2 \) denotes the \( L_2 \) norm of the weight vector, which is the sum of the squares of its components.
 
 
-\section{Q1.3 Starting from unregularized sum of squares error of a linear regression model, show how the explicit solution can be obtained, assuming \(X^TX\) is regular. [20]}
+\section{Q1.4 Starting from unregularized sum of squares error of a linear regression model, show how the explicit solution can be obtained, assuming \(X^TX\) is regular. [10]}
 
 In order to find a minimum of \( \frac{1}{2} \sum_{i=1}^{N} (x_i^T w - t_i)^2 \), we can inspect values where the derivative of the error function is zero, with respect to all weights \( w_j \).
 
@@ -111,7 +115,7 @@ w = (X^TX)^{-1}X^Tt.
 \]
 
 \part{Lecture 2}
-\section{Q2.1 Describe standard gradient descent and compare it to stochastic (i.e., online) gradient descent and minibatch stochastic gradient descent. [10]}
+\section{Q2.1 Describe standard gradient descent and compare it to stochastic (i.e., online) gradient descent and minibatch stochastic gradient descent. Explain what it is used for in machine learning. [10]}
 
 \textbf{Standard gradient descent}, also known as batch gradient descent, computes the gradient of the cost function with respect to the parameters (\( w \)) for the entire training dataset:
 \[
@@ -131,8 +135,14 @@ This method is noisier but can converge faster for large datasets.
 \]
 This approach aims to balance the computational efficiency of standard gradient descent with the faster convergence of SGD.
 
-\section{Q2.2 Write an \( L_2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas of the loss function and its gradient. [10]}
-The loss function for \( L_2 \)-regularized linear regression is given by:
+\section{Q2.2 Explain possible intuitions behind $L^2$ regularization. [5]}
+TODO
+
+\section{Q2.3 Explain the difference between hyperparameters and parameters. [5]}
+TODO
+
+\section{Q2.4 Write an \( L^2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas (i.e, formulas you would need to code it with numpy) of the loss function and its gradient. [10]}
+The loss function for \( L^2 \)-regularized linear regression is given by:
 \[
 E(w) = \frac{1}{2} \mathbb{E}_{(x,t)\sim p_{\text{data}}} [(x^T w - t)^2] + \frac{\lambda}{2} \|w\|^2
 \]
@@ -159,7 +169,7 @@ where \( \mathcal{B} \) is a minibatch of examples.
 \end{algorithm}
 
 
-\section{Q2.3 Does the SGD algorithm for linear regression always find the best solution on the training data? If yes, explain under what conditions it happens, if not explain why it is not guaranteed to converge. [20]}
+\section{Q2.5 Does the SGD algorithm for linear regression always find the best solution on the training data? If yes, explain under what conditions it happens, if not explain why it is not guaranteed to converge. What properties of the error function does this depend on? [10]}
 
 Stochastic Gradient Descent (SGD) for linear regression does not always guarantee finding the best solution on the training data. It converges to the global optimum if the following conditions are met:
 
@@ -176,7 +186,7 @@ Stochastic Gradient Descent (SGD) for linear regression does not always guarante
 
 When these conditions are satisfied, SGD converges to the unique optimum of convex problems. However, for non-convex loss functions, SGD is not guaranteed to find the global minimum; it may converge to a local minimum instead. The noise in the gradient estimation due to the stochastic nature of the algorithm can also affect convergence. Thus, while SGD can perform well in practice, especially for large datasets, it doesn't always find the best solution due to these factors.
 
-\section{Q2.4 After training a model with SGD, you ended up with a low training error and a high test error. Using the learning curves, explain what might have happened and what steps you might take to prevent this from happening. [10]}
+\section{Q2.6 After training a model with SGD, you ended up with a low training error and a high test error. Using the learning curves, explain what might have happened and what steps you might take to prevent this from happening. [10]}
 
 The learning curves might indicate that while the training loss decreases over time, the test loss decreases initially but then starts to increase. This scenario suggests that the \textbf{model is overfitting} to the training data. Overfitting occurs when a model learns the training data too well, including noise and details that do not generalize to unseen data. Consequently, the model performs well on the training data but poorly on the test data.
 
@@ -192,7 +202,7 @@ These methods can help in guiding the model to generalize better to unseen data 
 
 Another reason might be that the model \textbf{failed to converge}. In this case, you can try to increase the number of iterations or decrease the learning rate to improve convergence.
 
-\section{Q2.5 You were provided with a fixed training set and a fixed test set and you are supposed to report model performance on that test set. You need to decide what hyperparameters to use. How will you proceed and why?. [5]}
+\section{Q2.7 You were given a fixed training set and a fixed test set, and you are supposed to report model performance on that test set. You need to decide what hyperparameters to use. How will you proceed and why? [10]}
 
 To determine the best hyperparameters for a model given a fixed training and test set, the following procedure should be employed:
 
@@ -207,7 +217,7 @@ To determine the best hyperparameters for a model given a fixed training and tes
 
 This procedure is crucial because it helps to estimate the model's performance on unseen data and prevents overfitting to the training set. The validation set acts as a proxy for the test set, allowing for an unbiased evaluation of hyperparameter choices.
 
-\section{Q2.6 What method can be used for normalizing feature values? Explain why it is useful. [5]}
+\section{Q2.8 What method can be used for normalizing feature values? Explain why it is useful. [5]}
 
 Feature normalization can be achieved through methods such as Min-Max normalization and Z-score standardization. These methods are useful for several reasons:
 
@@ -230,7 +240,7 @@ Additionally, techniques similar to PCA, such as Principal Component Analysis it
 
 \part{Lecture 3}
 
-\section{Q3.1 Define binary classification, write down the perceptron algorithm and show how a prediction is made for a given example. [10]}
+\section{Q3.1 Define binary classification, write down the perceptron algorithm, and show how a prediction is made for a given data instance $x$. [10]}
 
 Binary classification is the task of classifying the elements of a given set into two groups based on a classification rule. In binary classification, the output variable can take only two values, typically denoted as 0 and 1, or -1 and 1 in some contexts.
 
@@ -258,7 +268,7 @@ Given a new input \( x \) and trained weights \( w \), the perceptron prediction
 where \( b \) is the bias term of the perceptron. If \( \hat{y} \) is positive, the input is classified into one class, and if it is negative, it is classified into the other class.
 
 
-\section{Q3.2 Define entropy, cross-entropy, Kullback-Leibler divergence, and prove the Gibbs inequality. [20]}
+\section{Q3.2 For discrete random variables, define entropy, cross-entropy, and Kullback-Leibler divergence, and prove the Gibbs inequality (i.e., that KL divergence is non-negative). [20]}
 
 Entropy \( H(P) \) for a discrete random variable with probability distribution \( P \) is defined as:
 \[
@@ -293,7 +303,7 @@ H(P) - H(P,Q) &= \sum_x P(x) \log \frac{Q(x)}{P(x)} \\
 since \( \sum_x P(x) = 1 \) and \( \sum_x Q(x) = 1 \). The inequality is strict unless \( P(x) = Q(x) \) for all \( x \), which proves Gibbs Inequality.
 
 
-\section{Q3.3 Explain the notion of likelihood in maximum likelihood estimation. [5]}
+\section{Q3.3 Explain the notion of likelihood in machine learning. What likelihood are we estimating, and why do we do it? [10]}
 
 Likelihood in the context of maximum likelihood estimation (MLE) is a function that measures the probability of observing the given data under different parameter values of a statistical model. For a set of independent and identically distributed (i.i.d) data points \( X = \{x_1, x_2, \ldots, x_N\} \), the likelihood of a parameter \( w \) is defined as:
 
@@ -306,7 +316,7 @@ where \( P_{\text{model}}(x_i; w) \) is the probability of observing the specifi
 In MLE, we seek the parameter \( w \) that maximizes this likelihood function, which is equivalent to maximizing the probability of observing the given data. While the likelihood itself is not a probability distribution, it serves as a scoring function that indicates how well the model with a particular set of parameters explains the observed data. Maximizing the likelihood function leads to finding the parameter values that make the observed data most probable under the assumed model.
 
 
-\section{Q3.4 Describe maximum likelihood estimation, as minimizing NLL, cross-entropy, and KL divergence. [20]}
+\section{Q3.4 Describe maximum likelihood estimation as minimizing NLL, cross-entropy, and KL divergence and explain whether they differ or are the same and why. [20]}
 
 Let \( X = \{x_1, x_2, \ldots, x_N\} \) be training data drawn independently from the data-generating distribution \( p_{\text{data}} \). We denote the empirical data distribution as \( \hat{p}_{\text{data}} \), where \( \hat{p}_{\text{data}}(x) = \frac{1}{N} \sum_{i=1}^{N} \mathbb{I}[x_i = x] \). Let \( p_{\text{model}}(x; w) \) be a family of distributions.
 
@@ -356,8 +366,10 @@ w_{\text{MLE}} = \arg \max_w p_{\text{model}}(t | x; w) = \arg \max_w \prod_{i=1
 
 Where \( H(\hat{p}_{\text{data}}) \) is the entropy of the empirical data distribution and \( D_{KL} \) is the Kullback-Leibler divergence. The terms are defined such that the conditional entropy is \( H(\hat{p}_{\text{data}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(\hat{p}_{\text{data}}(t | x))] \) and the conditional cross-entropy is \( H(\hat{p}_{\text{data}}, p_{\text{model}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(p_{\text{model}}(t | x; w))] \). The negative log-likelihood (NLL) is equivalent to cross-entropy or Kullback-Leibler divergence in the context of MLE.
 
+\section{Q3.5 Provide an intuitive justification for why cross-entropy is a good optimization objective in machine learning. What distributions do we compare in cross-entropy? Why is it good when the cross-entropy is low? [5]}
+TODO
 
-\section{Q3.5 Considering binary logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the sigmoid function). Describe how we can interpret the outputs of the linear part of the model as logits. [10]}
+\section{Q3.6 Considering binary logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the sigmoid function). [10]}
 
 In a binary logistic regression model, the prediction \( \hat{y} \) is based on the probability that a given input \( x \) belongs to a particular class \( C_1 \), which is modeled using the logistic function \( \sigma \). The parameters of the model include:
 
@@ -386,7 +398,7 @@ The final prediction \( \hat{y} \) is given by:
 
 The output of the linear part \( x^T w + b \) can be interpreted as logits, which are the log odds of the probability that \( x \) belongs to class \( C_1 \) before the sigmoid transformation. Logits can take any real value, and transforming them through the sigmoid function maps them to the \((0, 1)\) interval, representing probabilities.
 
-\section{Q3.6 Write down an L2-regularized minibatch SGD algorithm for training a binary logistic regression model, including the explicit formulas of the loss function and its gradient. [20]}
+\section{Q3.7 Write down an $L^2$-regularized minibatch SGD algorithm for training a binary logistic regression model, including the explicit formulas (i.e., formulas you would need to code it in numpy) of the loss function and its gradient. [20]}
 
 To train the logistic regression, we use MLE (maximum likelihood estimation). The loss for a minibatch $\mathcal{X} = \{(\vec{x}_1, t_1), (\vec{x}_2, t_2), \ldots, (\vec{x}_N, t_N)\}$ is given by
 $$
@@ -444,7 +456,7 @@ Therefor the gradient of the loss function is:
 
 
 \part{Lecture 4}
-\section{Q4.1 Define mean squared error and show how it can be derived using MLE. [10]}
+\section{Q4.1 Define mean squared error and show how it can be derived using MLE. What assumptions do we make during such derivation? [10]}
 
 Mean Squared Error (MSE) is commonly used as a loss function for regression problems and can be derived from Maximum Likelihood Estimation (MLE) when we assume that the target variables, \( t \), conditioned on the inputs, \( \vec{x} \), are normally distributed with a mean equal to the output of the model, \( y(\vec{x}; \vec{w}) \), and variance \( \sigma^2 \). Under this assumption, the probability distribution for \( t \) is given by \( p(t|\vec{x}; \vec{w}) = \mathcal{N}(t; y(\vec{x}; \vec{w}), \sigma^2) \).
 
@@ -468,7 +480,7 @@ E(\vec{w}) = \frac{1}{N} \sum_{i=1}^{N} (y(\vec{x}_i; \vec{w}) - t_i)^2.
 This derivation shows that when we assume a normal distribution for the model errors, the MLE approach naturally leads to the MSE as the loss function to be minimized.
 
 
-\section{Q4.2 Considering K-class logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the softmax function). Describe how we can interpret the outputs of the linear part of the model as logits. [10]}
+\section{Q4.2 Considering K-class logistic regression model, write down its parameters (including their size) and explain how we decide what classes the input data belong to (including the formula for the softmax function). [10]}
 
 To extend the binary logistic regression to a \( K \)-class case, we define the model parameters as a weight matrix \( W \in \mathbb{R}^{D \times K} \), where \( D \) is the number of features and \( K \) is the number of classes. Each column \( W_{*,i} \) corresponds to the weights associated with class \( i \).
 
@@ -513,7 +525,10 @@ which is identical to the sigmoid function. Therefore, the softmax function can 
 
 The sigmoid function thus can be represented as a softmax function applied to a vector with two elements, where one element is the logit \(x\) and the other is zero. This connection shows the versatility of softmax as a multi-class sigmoid function.
 
-\section{Q4.4 Write down an L2-regularized minibatch SGD algorithm for training a K-class logistic regression model, including the explicit formulas of the loss function and its gradient. [20]}
+\section{Q4.4 Show that the softmax function is invariant towards constant shift. [5]}
+TODO
+
+\section{Q4.5 Write down an $L^2$-regularized minibatch SGD algorithm for training a K-class logistic regression model, including the explicit formulas of the loss function and its gradient. [20]}
 
 To train a \( K \)-class logistic regression model, we use the minibatch stochastic gradient descent (SGD) with L2 regularization. The loss function is the regularized negative log-likelihood, and the gradient takes into account the regularization term.
 
@@ -552,7 +567,7 @@ The gradient of the loss function with L2 regularization is:
 Note that $1_t$ is a one-hot vector with a 1 in the position corresponding to the target class $t$.
 
 
-\section{Q4.5 Prove that decision regions of a multiclass logistic regression are convex. [10]}
+\section{Q4.6 Prove that decision regions of a multiclass logistic regression are convex. [10]}
 
 To prove the convexity of decision regions in multiclass logistic regression, consider two points \( x_A \) and \( x_B \) in the same decision region \( R_k \). The decision criterion for logistic regression is based on the linear functions \( x^T W \), where \( W \) is the weight matrix. A point \( x \) is in region \( R_k \) if and only if
 
@@ -565,7 +580,7 @@ is the largest among all class scores. For two points \( x_A, x_B \in R_k \), an
 Given that both \( \hat{y}(x_A)_k \) and \( \hat{y}(x_B)_k \) are the largest scores for their respective points, \( \hat{y}(x)_k \) will also be the largest score for the convex combination, placing \( x \) in \( R_k \). This holds for any convex combination of points in \( R_k \), thus \( R_k \) is convex.
 
 
-\section{Q4.6 Considering a single-layer MLP with D input neurons, H hidden neurons, K output neurons, hidden activation f, and output activation a, list its parameters (including their size) and write down how the output is computed. [10]}
+\section{Q4.7 Considering a single-layer MLP with $D$ input neurons, $H$ hidden neurons, $K$ output neurons, hidden activation $f$, and output activation $a$, list its parameters (including their size) and write down how the output is computed. [10]}
 
 A single-layer Multilayer Perceptron (MLP) with \( D \) input neurons, \( H \) hidden neurons, and \( K \) output neurons, uses the following parameters:
 
@@ -591,7 +606,7 @@ For a batch of inputs \( X \in \mathbb{R}^{N \times D} \):
 \end{enumerate}
 where \( 1 \) is a column vector of ones for bias broadcasting over the batch.
 
-\section{Q4.7 List the definitions of frequently used MLP output layer activations (the ones producing parameters of a Bernoulli distribution and a categorical distribution). Then write down three commonly used hidden layer activations (sigmoid, tanh, ReLU). [10]}
+\section{Q4.8 List the definitions of frequently used MLP output layer activations (the ones producing parameters of a Bernoulli distribution and a categorical distribution). Then write down three commonly used hidden layer activations (sigmoid, tanh, ReLU). Explain why identity is not a suitable activation for hidden layers. [10]}
 
 \subsection*{Output Layer Activations}
 \begin{itemize}
@@ -609,7 +624,7 @@ where \( 1 \) is a column vector of ones for bias broadcasting over the batch.
 
 \part{Lecture 5}
 
-\section{Q5.1 Considering a single-layer MLP with D input neurons, a ReLU hidden layer with H units and a softmax output layer with K units, write down the explicit formulas of the gradient of all the MLP parameters (two weight matrices and two bias vectors), assuming input x, target t, and negative log likelihood loss. [20]}
+\section{Q5.1 Considering a single-layer MLP with $D$ input neurons, a ReLU hidden layer with $H$ units and a softmax output layer with $K$ units, write down the explicit formulas of the gradient of all the MLP parameters (two weight matrices and two bias vectors), assuming input $x$, target $t$, and negative log likelihood loss. [20]}
 
 Assuming an MLP with \( D \) input neurons, a ReLU hidden layer with \( H \) units, and a softmax output layer with \( K \) units, we compute the gradients of the loss \( L \) with respect to the weight matrices \( W^{(h)}, W^{(y)} \) and bias vectors \( b^{(h)}, b^{(y)} \) given an input \( x \), a target \( t \), and using the negative log likelihood loss.
 
@@ -705,7 +720,10 @@ b^{(y)} &= b^{(y)} - \alpha \frac{\partial L}{\partial b^{(y)}}
 
 In these equations, \( \alpha \) represents the learning rate, and the derivatives with respect to \( h^{(in)} \) take into account the ReLU activation, which is zero for negative inputs and equal to the derivative of the loss with respect to \( h \) otherwise. The derivative with respect to \( y^{(in)} \) is computed as the difference between the output probabilities \( y \) and the one-hot encoded target vector \( t \).
 
-\section{Q5.2 Formulate Universal Approximation Theorem ('89). [10]}
+\section{Q5.2 Formulate the computation of MLP as a computation graph. Explain how such a graph can be used to compute the gradients of the parameters in the back-propagation algorithm. [10]}
+TODO
+
+\section{Q5.3 Formulate Universal Approximation Theorem ('89) and explain in words what it says about multi-layer perceptron. [10]}
 
 Let \(\phi(x) : \mathbb{R} \rightarrow \mathbb{R}\) be a nonconstant, bounded and nondecreasing continuous function. (Later a proof was given also for \(\phi = \text{ReLU}\) and even for any nonpolynomial function.)
 
@@ -721,7 +739,7 @@ where \(\phi\) is applied elementwise, then for all \(\mathbf{x} \in [0, 1]^D\):
 \left| F(\mathbf{x}) - f(\mathbf{x}) \right| < \epsilon.
 \]
 
-\section{Q5.3 How do we search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$? [10]}
+\section{Q5.4 How do we search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$? [10]}
 
 We search for a minimum of a function $f(\mathbf{x}) : \mathbb{R}^D \rightarrow \mathbb{R}$ subject to equality constraints $g_1(\mathbf{x}) = 0, \ldots, g_m(\mathbf{x}) = 0$ using the method of Lagrange multipliers. This involves finding a point $\mathbf{x} \in \mathbb{R}^D$ and a set of multipliers $\lambda_1, \ldots, \lambda_m \in \mathbb{R}$ such that the gradient of the Lagrangian function $\mathcal{L}(\mathbf{x}, \mathbf{\lambda})$ with respect to both $\mathbf{x}$ and $\mathbf{\lambda}$ is zero.
 
@@ -732,7 +750,7 @@ The Lagrangian is defined as:
 where $\nabla_{\mathbf{x}}\mathcal{L}(\mathbf{x}, \mathbf{\lambda}) = 0$ and $\nabla_{\mathbf{\lambda}}\mathcal{L}(\mathbf{x}, \mathbf{\lambda}) = 0$. This gives us a system of equations which, when solved, gives the points $\mathbf{x}$ that minimize $f(\mathbf{x})$ subject to the constraints.
 
 
-\section{Q5.4 Prove which categorical distribution with $N$ classes has maximum entropy. [10]}
+\section{Q5.5 Prove which categorical distribution with $N$ classes has maximum entropy. [10]}
 
 We want to find a categorical distribution \( \mathbf{p} = (p_1, \ldots, p_N) \) that maximizes entropy, subject to the constraints:
 
@@ -769,7 +787,7 @@ Since all \( p_i \) must satisfy the equality constraint \( \sum_{i=1}^{N} p_i =
 
 Therefore, each \( p_i \) is \( \frac{1}{N} \), indicating that the distribution with maximum entropy is the uniform distribution.
 
-\section{Q5.5 Consider derivation of softmax using maximum entropy principle, assuming we have a dataset of $N$ examples $(x_i,t_i)$, $x_i \in \mathbb{R}^D$, $t_i \in \{1,2,\ldots,K\}$. Formulate the three conditions we impose on the searched $\pi:\mathbb{R}^D \rightarrow \mathbb{R}^K$, and write down the Lagrangian to be minimized. [20]}
+\section{Q5.6 Consider derivation of softmax using maximum entropy principle, assuming we have a dataset of $N$ examples $(x_i,t_i)$, $x_i \in \mathbb{R}^D$, $t_i \in \{1,2,\ldots,K\}$. Formulate the three conditions we impose on the searched $\pi:\mathbb{R}^D \rightarrow \mathbb{R}^K$, and write down the Lagrangian to be minimized. [20]}
 
 Given a dataset of $N$ examples $(x_i, t_i)$ where $x_i \in \mathbb{R}^D$ and $t_i \in \{1, 2, \ldots, K\}$, we want to derive a softmax function using the maximum entropy principle. The softmax function $\pi(x)$ must satisfy the following conditions:
 
@@ -796,7 +814,7 @@ We therefore form a Lagrangian (ignoring the first inequality constraint):
 \]
 
 
-\section{Q5.6 Define precision (including true positives and others), recall, $F_1$ score, and $F_\beta$ score (we stated several formulations for $F_1$ and $F_\beta$ scores; any one of them will do). [10]}
+\section{Q5.7 Define precision (including true positives and others), recall, $F_1$ score, and $F_\beta$ score (we stated several formulations for $F_1$ and $F_\beta$ scores; any one of them will do). [10]}
 
 The confusion matrix is a table used to describe the performance of a classification model:
 
@@ -823,7 +841,7 @@ The \( F_1 \) score is the harmonic mean of precision and recall. It is defined 
 The \( F_{\beta} \) score generalizes the \( F_1 \) score by weighing recall more heavily than precision. It is defined as:
 \[ F_{\beta} = (1 + \beta^2) \times \frac{\text{Precision} \times \text{Recall}}{(\beta^2 \times \text{Precision}) + \text{Recall}} \]
 
-\section{Q5.7 Explain the difference between micro-averaged and macro-averaged $F_1$ scores. [10]}
+\section{Q5.8 Explain the difference between micro-averaged and macro-averaged $F_1$ scores. Under what circumstances do we use them? [10]}
 
 The micro-averaged \( F_1 \) score (\( F_1^{\mu} \)) aggregates the contributions of all classes to compute the average score. It is given by:
 \[ F_1^{\mu} =2\times \frac{Precision_{micro}\times Recall_{micro}}{Precision_{micro}+Recall_{micro}} = \frac{2 \sum TP}{2 \sum TP + \sum FP + \sum FN} \]
@@ -832,7 +850,7 @@ The macro-averaged \( F_1 \) score (\( F_1^{M} \)) is the arithmetic mean of the
 \[ F_1^{M} = \frac{1}{K} \sum_{k=1}^{K} F_{1k} \]
 where \( F_{1k} \) is the \( F_1 \) score of the \( k \)-th class.
 
-\section{Q5.8 Explain (using examples) why accuracy is not a suitable metric for unbalanced target classes, e.g., for a diagnostic test for a contagious disease. [5]}
+\section{Q5.9 Explain (using examples) why accuracy is not a suitable metric for unbalanced target classes, e.g., for a diagnostic test for a contagious disease. [5]}
 
 Accuracy is defined as the ratio of correctly predicted observations to the total observations. In the context of unbalanced datasets, particularly in disease diagnosis where the disease prevalence is low, a model might predict "no disease" for all patients and still achieve high accuracy. For example:
 
@@ -872,7 +890,10 @@ where:
 
 The TF-IDF score increases with the number of times a word appears in the document but is offset by the frequency of the word in the corpus, which helps to adjust for the fact that some words appear more frequently in general.
 
-\section{Q6.2 Define conditional entropy, mutual information, write down the relation between them, and finally prove that mutual information is zero if and only if the two random variables are independent (you do not need to prove statements about $D_{KL}$). [10]}
+\section{Q6.2 What is Zipf's law? Explain how it can be used to provide intuitive justification for using the logarithm when computing IDF. [5]}
+TODO
+
+\section{Q6.3 Define conditional entropy, mutual information, write down the relation between them, and finally prove that mutual information is zero if and only if the two random variables are independent (you do not need to prove statements about $D_{KL}$). [10]}
 
 Conditional entropy $H(Y|X)$ quantifies the expected value of the entropy of $Y$ given that the value of $X$ is known. It is defined as:
 
@@ -904,7 +925,7 @@ Therefore
     I(X;Y) = D_{KL}(P(X,Y)||P(X)P(Y))
 \]
 
-\section{Q6.3 Show that TF-IDF terms can be considered portions of suitable mutual information. [10]}
+\section{Q6.4 Show that TF-IDF terms can be considered portions of suitable mutual information. [10]}
 
 Let $\mathcal{D}$ be a collection of documents and $\mathcal{T}$ a collection of terms. We can express the mutual information between a document $d$ and a term $t$ using their probabilities and the TF-IDF measure.
 
@@ -930,7 +951,7 @@ I(\mathcal{D}; \mathcal{T}) = \frac{1}{|\mathcal{D}|} \sum_{d, t \in d} \text{TF
 
 Thus, we can interpret the TF-IDF weight as a portion of the mutual information between the collection of documents $\mathcal{D}$ and the collection of terms $\mathcal{T}$, where each TF-IDF value corresponds to a “bit of information” for a document-term pair.
 
-\section{Q6.4 Explain the concept of word embedding in the context of MLP and how it relates to representation learning. [5]}
+\section{Q6.5 Explain the concept of word embedding in the context of MLP and how it relates to representation learning. [5]}
 
 Word embedding is a technique in representation learning where words from a vocabulary are associated with vectors of real numbers, effectively capturing their semantic meanings in a continuous vector space. Semantically similar words are positioned closely in this space. 
 
@@ -941,7 +962,7 @@ This approach is a key part of representation learning because it enables MLPs t
 Word embeddings are the cornerstone of modern NLP models and are integrated into more advanced neural architectures like Recurrent Neural Networks (RNNs), Long Short-Term Memory networks (LSTMs), and Transformers, driving forward the state-of-the-art in various NLP applications.
 
 
-\section{Q6.5 Describe the skip-gram model trained using negative sampling. [10]}
+\section{Q6.6 Describe the skip-gram model trained using negative sampling. What is it used for? What are the input and output of the algorithm? [10]}
 
 The skip-gram model aims to learn word embeddings that predict the context words given a target word. For a given word in the vocabulary, the model outputs a probability distribution over all words to be the 'context' words.
 
@@ -992,7 +1013,7 @@ By focusing only on a small subset of negative samples rather than the entire vo
 \end{algorithmic}
 \end{algorithm}
 
-\section{Q6.6 How would you proceed to train a part-of-speech tagger (i.e., you want to assign each word with its part of speech) if you only could use pre-trained word embeddings and MLP classifier?. [5]}
+\section{Q6.7 How would you proceed to train a part-of-speech tagger (i.e., you want to assign each word with its part of speech) if you only could use pre-trained word embeddings and MLP classifier? [5]}
 
 I don't know mucb about this question, so this is what GPT-4 came up with:
 
@@ -1031,7 +1052,7 @@ I don't know mucb about this question, so this is what GPT-4 came up with:
 
 \part{Lecture 7}
 
-\section{Q7.1 Describe k-nearest neighbors prediction, both for regression and classification. Define Lp norm and describe uniform, inverse, and softmax weighting. [10]}
+\section{Q7.1 Describe $k$-nearest neighbors prediction, both for regression and classification. Define $L_p$ norm and describe uniform, inverse, and softmax weighting. [10]}
 
 \subsection*{Regression}
 For regression, k-NN predicts the target value by a weighted average of the targets of the k nearest neighbors:
@@ -1054,7 +1075,7 @@ The \( L_p \)-norm is defined as:
     \item Softmax: \( w_i = \frac{\exp(-\text{distance}(x, x_i))}{\sum_j \exp(-\text{distance}(x, x_j))} \)
 \end{itemize}
 
-\section{Q7.2 Show that L2-regularization can be obtained from a suitable prior by Bayesian inference (from the MAP estimate). [10]}
+\section{Q7.2 Show that $L^2$-regularization can be obtained from a suitable prior by Bayesian inference (from the MAP estimate). [10]}
 
 Assuming a Gaussian prior for model parameters $\mathbf{w}$ with zero mean and variance $\sigma^2$, the prior distribution is given as $p(\mathbf{w}_i) = \mathcal{N}(\mathbf{w}_i; 0, \sigma^2)$. Consequently, the prior over all weights $\mathbf{w}$ is $p(\mathbf{w}) = \prod_{i=1}^N \mathcal{N}(\mathbf{w}_i; 0, \sigma^2) = \mathcal{N}(\mathbf{w}; 0, \sigma^2 \mathbf{I})$. The maximum a posteriori (MAP) estimation is then:
 
@@ -1072,7 +1093,7 @@ Incorporating the Gaussian prior probability, we get the L2-regularized objectiv
 
 which is the L2-regularization term.
 
-\section{Q7.3 Write down how $\mathbf{p(C_k|x)}$ is approximated in a Naive Bayes classifier, explicitly state the Naive Bayes assumption, and show how is the prediction performed. [10]}
+\section{Q7.3 Write down how $p(C_k|x)$ is approximated in a Naive Bayes classifier, explicitly state the Naive Bayes assumption, and show how is the prediction performed. [10]}
 
 The Naive Bayes classifier approximates the conditional probability \( p(C_k | x) \) using Bayes' theorem and the naive independence assumption. This assumption states that all features \( x_d \) are independent given the class \( C_k \). Therefore, the joint probability of the feature vector \( x \) given the class \( C_k \) can be expressed as the product of individual probabilities:
 
@@ -1172,6 +1193,12 @@ p_{d,k} = \frac{\sum_{i=1}^{N_k} x_{i,d} + \alpha}{N_k + 2\alpha},
 
 where \( \alpha \) is a smoothing parameter, typically set to 1.
 
+\section{Q7.6 What measures can we take to prevent numeric instabilities in the Naive Bayes classifier, particularly if the probability density is too high in Gaussian Naive Bayes and there are zero probabilities in Bernoulli Naive Bayes? [10]}
+TODO
+
+\section{Q7.7 What is the difference between discriminative and (classical) generative models? [5]}
+TODO
+
 \part{Lecture 8}
 
 \section{Q8.1 Prove that independent discrete random variables are uncorrelated. [10]}
@@ -1205,7 +1232,7 @@ Substituting this into the covariance formula gives:
 
 Therefore, if \( X \) and \( Y \) are independent, their covariance is zero, implying that they are uncorrelated.
 
-\section{Q8.2 Write down the definition of covariance and Pearson correlation coefficient $\rho$ , including its range. [10]}
+\section{Q8.2 Write down the definition of covariance and Pearson correlation coefficient $\rho$, including its range. [10]}
 
 The covariance between two random variables \( X \) and \( Y \) is a measure of the joint variability of \( X \) and \( Y \). It is defined as:
 \[
@@ -1303,7 +1330,10 @@ This metric is utilized in machine learning to assess the consistency of annotat
 
 By quantifying the agreement level, Cohen's kappa allows for more informed decisions in the data curation process, ultimately leading to the development of more robust machine learning models.
 
-\section{Q8.7 Considering an averaging ensemble of M models, prove the relation between the average mean squared error of the ensemble and the average error of the individual models, assuming the model errors have zero means and are uncorrelated. [20]}
+\section{Q8.7 Assuming you have collected data for classification by letting people annotate data instances. How do you estimate a reasonable range for classifier performance? [5]}
+TODO
+
+\section{Q8.8 Considering an averaging ensemble of $M$ models, prove the relation between the average mean squared error of the ensemble and the average error of the individual models, assuming the model errors have zero means and are uncorrelated. Use a formula to explain what uncorrelated errors mean in this context. [20]}
 
 Let \( y_i(x) \) be the prediction of model \( i \) for an input \( x \) with true target \( t \), and \( \varepsilon_i(x) \) be the error of model \( i \) such that \( y_i(x) = t + \varepsilon_i(x) \). The mean squared error (MSE) of model \( i \) is:
 
@@ -1338,7 +1368,7 @@ Therefore, the MSE of the ensemble simplifies to:
 
 Hence, the average MSE of the ensemble is \( \frac{1}{M} \) times the average MSE of the individual models.
 
-\section{Q8.8 Explain knowledge distillation: what it is used for, describe how it is done. [10]}
+\section{Q8.9 Explain knowledge distillation: what it is used for, describe how it is done. What is the loss function? How does it differ from standard training? [10]}
 
 Knowledge distillation is a process of transferring knowledge from a large or complex model (teacher) to a smaller model (student). It is especially useful for deploying deep learning models on devices with limited computational power.
 
@@ -1372,7 +1402,10 @@ During training, a leaf is split by selecting the feature and the threshold that
 \end{enumerate}
 The process continues recursively until a stopping criterion is met, which could be a maximum depth of the tree, a minimum number of samples in a leaf, or a minimal improvement to the criterion.
 
-\section{Q9.2 In a K-class classification decision tree, state what values are kept in internal nodes, define the Gini index and describe how is a node split during training (without discussing splitting constraints). [10]}
+\section{Q9.2 Explain the CART algorithm for constructing a decision tree. Explain the relationship between the loss function that is optimized during the decision tree construction and the splitting criterion that is during the node splitting. [10]}
+TODO
+
+\section{Q9.3 In a $K$-class classification decision tree, state what values are kept in internal nodes, define the Gini index and describe how is a node split during training (without discussing splitting constraints). [10]}
 
 In a classification decision tree for \( K \) classes, internal nodes represent the decision criteria, which consist of a feature and a threshold that is used to split the data into two child nodes.
 
@@ -1390,7 +1423,7 @@ During training, a node is split by selecting the feature and the threshold that
 \end{enumerate}
 This process recursively continues down the tree until a stopping criterion is reached, such as a maximum depth or a minimum node size.
 
-\section{Q9.3 In a K-class classification decision tree, state what values are kept in internal nodes, define the entropy criterion and describe how is a node split during training (without discussing splitting constraints). [10]}
+\section{Q9.4 In a $K$-class classification decision tree, state what values are kept in internal nodes, define the entropy criterion and describe how is a node split during training (without discussing splitting constraints). [10]}
 
 
 In a \( K \)-class classification decision tree, the internal nodes hold the decision rules, typically a feature and a threshold that partitions the dataset into subsets.
@@ -1411,7 +1444,7 @@ The process of splitting a node during training involves:
     \item This process is recursively applied to each new node until the stopping criteria are met.
 \end{enumerate}
 
-\section{Q9.4 For binary classification, derive the Gini index from a squared error loss. [20]}
+\section{Q9.5 For binary classification, derive the Gini index from a squared error loss. [20]}
 
 
 Consider a binary classification setting with a set of training examples belonging to a leaf node \( T \). Let \( n_T(0) \) denote the number of examples with target value 0, \( n_T(1) \) the number of examples with target value 1, and \( p_T \) the proportion of examples with target value 1 in \( T \), i.e., \( p_T = \frac{n_T(1)}{n_T(0) + n_T(1)} \).
@@ -1438,7 +1471,7 @@ Expanding the terms, we get:
     
 which is proportional to the Gini impurity measure \( G(T) = 2p_T(1 - p_T) \) for a binary classification.
 
-\section{Q9.5 For K-class classification, derive the entropy criterion from a non-averaged NLL loss. [20]}
+\section{Q9.6 For $K$-class classification, derive the entropy criterion from a non-averaged NLL loss. [20]}
 
 Given a set of training examples \(I_T\) corresponding to a leaf node \(T\) in a decision tree for K-class classification, let \(n_T(k)\) denote the count of examples in \(T\) with target class \(k\). The probability of class \(k\) in \(T\) is given by \(p_T(k) = \frac{n_T(k)}{|I_T|}\).
 
@@ -1466,7 +1499,7 @@ L(p_T) = |I_T| \cdot H(p_T).
 
 This concludes the derivation, showing that minimizing the non-averaged NLL loss is equivalent to minimizing the entropy of the predicted class distribution within a leaf node of a decision tree.
 
-\section{Q9.6 Describe how is a random forest trained (including bagging and a random subset of features) and how is prediction performed for regression and classification. [10]}
+\section{Q9.7 Describe how is a random forest trained (including bagging and a random subset of features) and how is prediction performed for regression and classification. [10]}
 
 A random forest is an ensemble learning method that operates by constructing a multitude of decision trees during training and outputting the class that is the mode of the classes (classification) or mean prediction (regression) of the individual trees.
 
@@ -1498,7 +1531,13 @@ The random forest algorithm leverages the power of multiple decision trees to re
 
 \part{Lecture 10}
 
-\section{Q10.1 Write down the loss function which we optimize in gradient boosted decision trees during the construction of $t^{th}$ tree. Then define $g_i$ and $h_i$ and show the value $w_T$ of optimal prediction in node T and the criterion used during node splitting. [20]}
+\section{Q10.1 Explain the main differences between random forests and gradient-boosted decision trees. [5]}
+TODO
+
+\section{Q10.2 Explain the intuition for second-order optimization using Newton's root-finding method or Taylor expansions. [10]}
+TODO
+
+\section{Q10.3 Write down the loss function that we optimize in gradient-boosted decision trees while constructing $t$ tree. Then, define $g_i$ and $h_i$ and show the value $w_{\tau}$ of optimal prediction in node $\tau$ and the criterion used during node splitting. [20]}
 
 During the construction of the $t^{\text{th}}$ tree in gradient boosting, we optimize the following loss function:
 
@@ -1524,7 +1563,7 @@ w_T^* = - \frac{\sum_{i \in I_T} g_i}{\lambda + \sum_{i \in I_T} h_i},
 
 where $I_T$ denotes the set of instance indices in node $T$. During node splitting, we seek to maximize the gain from the split, which is computed using these gradients.
 
-\section{Criterion for Node Splitting}
+\subsection{Criterion for Node Splitting}
 
 The splitting criterion in gradient boosting is based on maximizing the gain $G$, which is calculated as follows:
 
@@ -1534,7 +1573,7 @@ G = \frac{1}{2} \left[ \frac{(\sum_{i \in I_L} g_i)^2}{\lambda + \sum_{i \in I_L
 
 where $I_L$ and $I_R$ are the sets of instance indices for the left and right splits from node $T$, and $\gamma$ is a regularization parameter to penalize the complexity of the model.
 
-\section{Q10.2 For a K-class classification, describe how to perform prediction with a gradient boosted decision tree trained for T time steps (how the individual trees perform prediction and how are the KT trees combined to produce the predicted categorical distribution). [10]}
+\section{Q10.4 For a $K$-class classification, describe how to perform prediction with a gradient boosted decision tree trained for $T$ time steps (how the individual trees perform prediction and how are the $KT$ trees combined to produce the predicted categorical distribution). [10]}
 
 In a \( K \)-class classification task using gradient boosted decision trees, prediction after \( T \) timesteps is performed as follows. Each timestep \( t \) involves training \( K \) trees, denoted as \( w_{t,k} \), with each tree predicting a value for one of the \( K \) classes. Prediction for an instance \( \mathbf{x}_i \) is made by summing the outputs of all trees corresponding to each class across all timesteps and then applying the softmax function to these sums to obtain the predicted probabilities for each class:
 
@@ -1544,7 +1583,7 @@ In a \( K \)-class classification task using gradient boosted decision trees, pr
 
 where \( y_{t,k}(\mathbf{x}_i; w_{t,k}) \) is the output of the \( k \)-th tree at timestep \( t \) for instance \( \mathbf{x}_i \). The predicted categorical distribution for instance \( \mathbf{x}_i \) is then the output of the softmax function, which provides a probability distribution over the \( K \) classes.
 
-\section{Q10.3 What type of data are gradient boosted decision trees good for as opposed to multilayer perceptron? Explain the intuition why it is the case. [5]}
+\section{Q10.5 What type of data are gradient boosted decision trees good for as opposed to multilayer perceptron? Explain the intuition why it is the case. [5]}
 
 
 Gradient boosted decision trees (GBDTs) are optimal for structured, tabular data where input features have high predictive power and clear interpretability. They can capture non-linear relationships and feature interactions without extensive preprocessing.
@@ -1567,7 +1606,7 @@ Multilayer perceptrons (MLPs), or neural networks, are better suited for high-di
 The choice of model depends on the dataset characteristics and the problem at hand.
 
 \part{Lecture 11}
-\section{Q11.1 Formulate SVD decomposition of matrix X, describe properties of individual parts of the decomposition. Explain what the reduced version of SVD is. [10]}
+\section{Q11.1 Formulate SVD decomposition of matrix $X$, describe properties of individual parts of the decomposition. Explain what the reduced version of SVD is. [10]}
 
 Given a matrix \( X \in \mathbb{R}^{m \times n} \), the singular value decomposition (SVD) of \( X \) is a factorization of the form:
 
@@ -1600,7 +1639,7 @@ The reduced version of SVD is used when we want to approximate \( X \) by a matr
 
 where \( U_k \) and \( V_k \) contain only the first \( k \) columns of \( U \) and \( V \), and \( \Sigma_k \) contains only the top \( k \) singular values. This approximation minimizes the Frobenius norm \( \|X - \tilde{X}\|_F \) among all rank-\( k \) approximations.
 
-\section{Q11.2 Formulate the Eckart-Young theorem. [10]}
+\section{Q11.2 Formulate the Eckart-Young theorem. Provide an interpretation of what the theorem says and why it is useful. [10]}
 
 The Eckart-Young theorem states that given a matrix \( X \in \mathbb{R}^{n \times m} \) and its Singular Value Decomposition (SVD), the best rank-\( k \) approximation \( X_k \) of \( X \) in terms of the Frobenius norm is obtained by retaining the first \( k \) singular values and corresponding singular vectors. Formally:
 
@@ -1622,7 +1661,7 @@ for any \( B \in \mathbb{R}^{n \times m} \) of rank \( k \). The Frobenius norm 
 
 The norm is invariant under orthogonal transformations, and the best strategy to approximate \( X \) while preserving most of its norm is to remove the smallest singular values.
 
-\section{Q11.3 Explain how to compute the PCA of dimension M using the SVD decomposition of a data matrix X, and why it works. [10]}
+\section{Q11.3 Explain how to compute the PCA of dimension $M$ using the SVD decomposition of a data matrix $X$, and why it works. [10]}
 
 Principal Component Analysis (PCA) can be computed using Singular Value Decomposition (SVD) of the data matrix \( X \). For a data matrix \( X \in \mathbb{R}^{n \times m} \), where each row is a data point and each column is a feature, PCA is performed as follows:
 
@@ -1650,7 +1689,7 @@ Approximating the matrix in terms of Frobenius norm means keeping the most varia
 \end{gathered}
 \]
 
-\section{Q11.4 Given a data matrix X, write down the algorithm for computing the PCA of dimension M using the power iteration algorithm. [20]}
+\section{Q11.4 Given a data matrix $X$, write down the algorithm for computing the PCA of dimension $M$ using the power iteration algorithm. [20]}
 
 Given a data matrix \( X \), the PCA of dimension \( M \) can be computed using the power iteration algorithm as follows:
 
@@ -1674,7 +1713,10 @@ Given a data matrix \( X \), the PCA of dimension \( M \) can be computed using 
 
 This algorithm computes the top \( M \) principal components by iteratively finding the direction of maximum variance (eigenvector) and deflating the covariance matrix to remove this variance before finding the next component.
 
-\section{Q11.5 Describe the K-means algorithm, including the kmeans++ initialization. [20]}
+\section{Q11.5 List at least two applications of SVD or PCA. [5]}
+TODO
+
+\section{Q11.6 Describe the K-means algorithm, including the kmeans++ initialization. What is it used for? What is the loss function that the algorithm optimizes? What can you say about the algorithm convergence? [20]}
 
 K-Means is a clustering algorithm that partitions \( N \) data points into \( K \) clusters. Each cluster is defined by its centroid \( \mu_k \), which is the mean of the points assigned to the cluster. The objective is to minimize the within-cluster sum of squares.
 
@@ -1709,6 +1751,9 @@ Our objective function \( J \), which we aim to minimize, is
 \end{enumerate}
 
 The K-means++ initialization helps to ensure that the initial centroids are as far from each other as possible, leading to better and faster convergence of the algorithm.
+
+\section{Q11.7 Name at least two clustering algorithms. What is their main principle? How do they differ? [10]}
+TODO
 
 \part{Lecture 12}
 
@@ -1835,7 +1880,7 @@ Therefore, the sum of probabilities for $m$ independent tests is:
 
 This proves that the Bonferroni correction ensures that the FWER is at most $\alpha$.
 
-\section{Q12.6 For a trained model and a given test set with N examples and metric E, write how to estimate $95\%$ confidence intervals using bootstrap resampling. [10]}
+\section{Q12.6 For a trained model and a given test set with $N$ examples and metric $E$, write how to estimate $95\%$ confidence intervals using bootstrap resampling. [10]}
 
 Given a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$, a trained model with predictions $\{ y(x_1), \ldots, y(x_N) \}$, and a performance metric $E$, we estimate the 95\% confidence intervals of the model's performance using bootstrap resampling as follows:
 
@@ -1859,7 +1904,7 @@ CI = \left( \textit{performances}\left[ \frac{R}{40} \right], \textit{performanc
 
 This interval estimates the range within which the true performance metric of the model lies with 95\% confidence.
 
-\section{Q12.7 For two trained models and a given test set with N examples and metric E, explain how to perform a paired bootstrap test that the first model is better than the other. [10]}
+\section{Q12.7 For two trained models and a given test set with $N$ examples and metric $E$, explain how to perform a paired bootstrap test that the first model is better than the other. [10]}
 
 
 Given a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$ and predictions from two models $\{y(x_1), \ldots, y(x_N)\}$ and $\{z(x_1), \ldots, z(x_N)\}$, we aim to test the hypothesis that the first model \(y\) performs better than the second model \(z\) using the paired bootstrap test with the following steps:
@@ -1879,7 +1924,7 @@ Given a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$ and predictions from two
 
 Unfortunately, the value returned by the algorithm is not really a p-value. The reason is that the distribution of differences was obtained \textbf{under the true distribution}. However, to perform the statistical test, we require the distribution of the test statistic \textbf{under the null hypothesis}. Nevertheless, you can encounter such paired bootstrap tests \textit{``in the wild''}.
 
-\section{Q12.8 For two trained models and a given test set with N examples and metric E, explain how to perform a random permutation test that the first model is better than the other with a significance level of $\alpha$. [10]}
+\section{Q12.8 For two trained models and a given test set with $N$ examples and metric $E$, explain how to perform a random permutation test that the first model is better than the other with a significance level of $\alpha$. [10]}
 
 Given two trained models and a test set $\{ (x_1, t_1), \ldots, (x_N, t_N) \}$, with model predictions $\{y(x_1), \ldots, y(x_N)\}$ and $\{z(x_1), \ldots, z(x_N)\}$, we perform a random permutation test to determine if the first model is significantly better than the second at a significance level \( \alpha \) with the following algorithm:
 
@@ -1947,7 +1992,13 @@ Both approaches have their merits and challenges when applied to ML ethics. Deon
     \item \textbf{Data Mismatch:} When training and testing data do not align, minority languages could be disproportionately classified as hate speech or not safe for work, as highlighted in the paper "The Risk of Racial Bias in Hate Speech Detection" (Sap et al., ACL 2019).
     \item \textbf{Feedback Loops:} Recommender systems can create feedback loops where predictions influence user behavior, which then feeds back into the training data. This can lead to echo chambers and self-affirmative groups. A notable example is how YouTube's recommendation algorithms facilitated the discovery of a category of home videos of scantily clad children by pedophiles.
   \end{enumerate}
-  
+
+\section{Q13.4 List at least one example of an ethical problem that can originate in model design or model development. [5]}
+TODO
+
+\section{Q13.5 Under what circumstances could train-test mismatch be an ethical problem? [5]}
+TODO
+
 \part{The End}
 
 \section{Contributing}
@@ -1959,9 +2010,9 @@ If you decide to do so feel free to add your name to the list of contributors be
 
 
 \subsection{Contributors}
-%\begin{itemize}
-    %\item 
-%\end{itemize}
+\begin{itemize}
+    \item \textbf{luk27official (Lukáš Polák)} - added 2024/25 questions 
+\end{itemize}
 \end{document}
 
 
