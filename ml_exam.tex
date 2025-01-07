@@ -52,7 +52,7 @@ Artificial Intelligence such as GPT-4, GitHub Copilot and possibly others were u
 \part{Lecture 1}
 \section{Q1.1 Explain how reinforcement learning differs from supervised and unsupervised learning in terms of the type of input the learning algorithms use to improve model performance. [5]}
 
-TODO
+Reinforcement learning differs from supervised and unsupervised learning based on the type of input and feedback used to improve model performance. In supervised learning, the algorithm learns from labeled data where each input is paired with a known output, aiming to minimize prediction errors. Unsupervised learning uses unlabeled data to uncover hidden patterns or structures without explicit feedback. In contrast, reinforcement learning involves an agent interacting with an environment, receiving rewards or penalties as feedback for actions taken, and learning through trial-and-error to maximize cumulative rewards over time. Unlike supervised learning’s direct guidance and unsupervised learning’s pattern discovery, reinforcement learning focuses on sequential decision-making.
 
 \section{Q1.2 Explain why we need separate train and test data? What is generalization and how the concept relates to underfitting and overfitting? [10]}
 
@@ -74,7 +74,6 @@ TODO
     \item \textbf{Underfitting:} Model is too simple, fails to capture underlying patterns in data, leading to poor performance on both training and test data.
     \item \textbf{Overfitting:} Model is too complex, captures noise along with patterns in the training data, leading to poor generalization on test data.
 \end{itemize}
-
 
 
 \section{Q1.3 Define prediction function of a linear regression model and write down $L^2$-regularized mean squared error loss. [10]}
@@ -136,10 +135,18 @@ This method is noisier but can converge faster for large datasets.
 This approach aims to balance the computational efficiency of standard gradient descent with the faster convergence of SGD.
 
 \section{Q2.2 Explain possible intuitions behind $L^2$ regularization. [5]}
-TODO
+
+$L^2$ regularization helps prevent overfitting by adding a penalty for large weights in a model. This penalty is the sum of the squares of the model's parameters, making it costly to have very large values. By keeping the weights smaller, the model becomes simpler and less likely to fit noise in the data. It also balances bias and variance, reducing the model's sensitivity to specific features and improving its ability to generalize to new data.
+
+Generally, we want to reduce overfitting of the model. In short, the regularization controls complexity to create smoother, more reliable models.
 
 \section{Q2.3 Explain the difference between hyperparameters and parameters. [5]}
-TODO
+
+Parameters are internal values that the model learns from the training data. Examples include weights in linear regression or neural networks and the split points in decision trees. Parameters change automatically during training to optimize the model's performance by minimizing the loss function.
+
+Hyperparameters are external configurations set before training begins and control how the learning process operates. Examples include the learning rate, regularization strength, and the number of hidden layers in a neural network. Unlike parameters, hyperparameters are not learned from the data but must be tuned manually or using automated search techniques to find the best model performance.
+
+In summary, parameters are learned by the model, while hyperparameters are predefined settings that influence how the model learns.
 
 \section{Q2.4 Write an \( L^2 \)-regularized minibatch SGD algorithm for training a linear regression model, including the explicit formulas (i.e, formulas you would need to code it with numpy) of the loss function and its gradient. [10]}
 The loss function for \( L^2 \)-regularized linear regression is given by:
@@ -367,7 +374,18 @@ w_{\text{MLE}} = \arg \max_w p_{\text{model}}(t | x; w) = \arg \max_w \prod_{i=1
 Where \( H(\hat{p}_{\text{data}}) \) is the entropy of the empirical data distribution and \( D_{KL} \) is the Kullback-Leibler divergence. The terms are defined such that the conditional entropy is \( H(\hat{p}_{\text{data}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(\hat{p}_{\text{data}}(t | x))] \) and the conditional cross-entropy is \( H(\hat{p}_{\text{data}}, p_{\text{model}}) = \mathbb{E}_{(x,t) \sim \hat{p}_{\text{data}}}[-\log(p_{\text{model}}(t | x; w))] \). The negative log-likelihood (NLL) is equivalent to cross-entropy or Kullback-Leibler divergence in the context of MLE.
 
 \section{Q3.5 Provide an intuitive justification for why cross-entropy is a good optimization objective in machine learning. What distributions do we compare in cross-entropy? Why is it good when the cross-entropy is low? [5]}
-TODO
+
+Cross-entropy is a good optimization objective in machine learning because it measures how well the predicted probability distribution from a model matches the true distribution of the target labels. Intuitively, it quantifies the difference between what the model believes (its predicted probabilities) and the actual outcomes.
+
+In classification tasks, cross-entropy compares:
+\begin{itemize}
+    \item True distribution: Represented as a one-hot encoded vector for each class, where the correct class has a probability of 1, and all others are 0.
+    \item Predicted distribution: The model’s output probabilities for each class (softmax or sigmoid outputs).
+\end{itemize}
+
+When the cross-entropy is low, it means the predicted probabilities are close to the true labels — the model is confident and correct. For instance, if a model correctly predicts a probability near 1 for the correct class and near 0 for others, the cross-entropy loss is minimal. Conversely, high cross-entropy means the predictions are far from the true labels, indicating poor performance.
+
+In essence, minimizing cross-entropy encourages the model to assign high probabilities to correct labels, leading to better classification accuracy and more confident predictions aligned with the true data distribution.
 
 \section{Q3.6 Considering binary logistic regression model, write down its parameters (including their size) and explain how prediction is performed (including the formula for the sigmoid function). [10]}
 
@@ -526,7 +544,10 @@ which is identical to the sigmoid function. Therefore, the softmax function can 
 The sigmoid function thus can be represented as a softmax function applied to a vector with two elements, where one element is the logit \(x\) and the other is zero. This connection shows the versatility of softmax as a multi-class sigmoid function.
 
 \section{Q4.4 Show that the softmax function is invariant towards constant shift. [5]}
-TODO
+
+The main idea is that the term $e^c$ gets canceled out.
+
+$\text{softmax}(z_i + c) = \frac{e^{z_i + c}}{\sum_{j=1}^n e^{z_j + c}} = \frac{e^{z_i} e^{c}}{\sum_{j=1}^n e^{z_j} e^{c}} = \frac{e^{z_i}}{\sum_{j=1}^n e^{z_j}} = \text{softmax}(z_i)$
 
 \section{Q4.5 Write down an $L^2$-regularized minibatch SGD algorithm for training a K-class logistic regression model, including the explicit formulas of the loss function and its gradient. [20]}
 
@@ -721,7 +742,30 @@ b^{(y)} &= b^{(y)} - \alpha \frac{\partial L}{\partial b^{(y)}}
 In these equations, \( \alpha \) represents the learning rate, and the derivatives with respect to \( h^{(in)} \) take into account the ReLU activation, which is zero for negative inputs and equal to the derivative of the loss with respect to \( h \) otherwise. The derivative with respect to \( y^{(in)} \) is computed as the difference between the output probabilities \( y \) and the one-hot encoded target vector \( t \).
 
 \section{Q5.2 Formulate the computation of MLP as a computation graph. Explain how such a graph can be used to compute the gradients of the parameters in the back-propagation algorithm. [10]}
-TODO
+
+A Multi-Layer Perceptron (MLP) is a feedforward neural network that consists of an input layer, one or more hidden layers, and an output layer. The MLP processes an input through each layer by applying a series of transformations, including weighted sums and activation functions.
+
+We can represent the computation performed by the MLP as a computation graph, where each node represents a variable or an operation, and edges represent dependencies between them.
+
+Let's assume an MLP with one hidden layer for simplicity, though this extends to more layers. The forward pass involves the following steps:
+
+\begin{enumerate}
+    \item Input to the first layer
+    \item Activation function
+    \item Input to the output layer
+    \item Output layer activation (optional)
+\end{enumerate}
+
+The computation graph for this MLP can be visualized as a directed acyclic graph (DAG), where:
+
+Nodes: Represent operations (like matrix multiplication, addition, activation functions) and variables (like weights, biases, activations).
+Edges: Represent dependencies between operations, such as the flow of data between layers or the relationship between weights and activations.
+Here’s a simplified view of the graph:
+
+Input x ----> (W1 * x + b1) ----> Activation f ----> (W2 * a1 + b2) ----> Output y
+
+Not really sure how to explain the backpropagation part, basically you compute the gradients of the loss with respect to the parameters by applying the chain rule in reverse order through the graph. The gradients are computed layer by layer, starting from the output layer and moving backward to the input layer. The chain rule allows us to compute the gradients of the loss with respect to each parameter by multiplying the gradients of the loss with respect to the output of each node in the graph.
+
 
 \section{Q5.3 Formulate Universal Approximation Theorem ('89) and explain in words what it says about multi-layer perceptron. [10]}
 
@@ -891,7 +935,11 @@ where:
 The TF-IDF score increases with the number of times a word appears in the document but is offset by the frequency of the word in the corpus, which helps to adjust for the fact that some words appear more frequently in general.
 
 \section{Q6.2 What is Zipf's law? Explain how it can be used to provide intuitive justification for using the logarithm when computing IDF. [5]}
-TODO
+Zipf's Law is an empirical rule that suggests that in many natural language datasets, the frequency of a word is inversely proportional to its rank in a frequency table. In simpler terms, a few words are very frequent, and many words are very rare. This means that the most frequent word in a text will appear approximately twice as often as the second most frequent word, three times as often as the third most frequent word, and so on.
+
+Mathematically, Zipf's Law can be expressed as: $f(r) \propto \frac{1}{r^s}$, where $f(r)$ is the frequency of the word ranked $r$, $r$ is the rank of the word, $s$ is a parameter close to 1 (often approximated as 1 for natural language).
+
+If Zipf's law holds, we can use it to justify the use of the logarithm when computing the IDF. The intuition is that the frequency of a word is inversely proportional to its rank, which means that the IDF should increase logarithmically with the rank of the word. This is because the logarithm is the inverse function of the exponential, and it helps to compress the range of values, making the IDF more manageable and interpretable. By taking the logarithm of the IDF, we can ensure that the IDF values are not skewed by the extreme frequency differences between words, aligning with the observed distribution of word frequencies in natural language datasets.
 
 \section{Q6.3 Define conditional entropy, mutual information, write down the relation between them, and finally prove that mutual information is zero if and only if the two random variables are independent (you do not need to prove statements about $D_{KL}$). [10]}
 
@@ -1194,10 +1242,115 @@ p_{d,k} = \frac{\sum_{i=1}^{N_k} x_{i,d} + \alpha}{N_k + 2\alpha},
 where \( \alpha \) is a smoothing parameter, typically set to 1.
 
 \section{Q7.6 What measures can we take to prevent numeric instabilities in the Naive Bayes classifier, particularly if the probability density is too high in Gaussian Naive Bayes and there are zero probabilities in Bernoulli Naive Bayes? [10]}
-TODO
+\subsection*{Numeric Instabilities in Naive Bayes Classifier}
+
+\subsubsection*{1. Gaussian Naive Bayes (for continuous data):}
+
+In Gaussian Naive Bayes, we assume that the features (or variables) follow a normal (Gaussian) distribution. The probability density function of the Gaussian is given by:
+
+\[
+P(x_i | y) = \frac{1}{\sqrt{2\pi \sigma_y^2}} \exp\left(-\frac{(x_i - \mu_y)^2}{2\sigma_y^2}\right)
+\]
+
+Where \( \mu_y \) and \( \sigma_y^2 \) are the mean and variance of the features for each class \( y \).
+
+\textbf{Issue:}
+\begin{itemize}
+    \item \textit{High probability density:} If the variance \( \sigma_y^2 \) is very small (i.e., the feature values are very close to the mean), the probability density can become excessively high, potentially leading to numeric instability.
+\end{itemize}
+
+\textbf{Solutions:}
+\begin{itemize}
+    \item \textit{Regularization of variance:} Add a small constant to the variance to avoid dividing by a very small value, which helps prevent excessively large probability densities. This is typically done by adding a smoothing term:
+    \[
+    \sigma_y^2 \rightarrow \sigma_y^2 + \epsilon
+    \]
+    where \( \epsilon \) is a small positive constant, such as \( 10^{-10} \).
+    
+    \item \textit{Logarithmic transformation:} In practice, the Naive Bayes classifier often works with the logarithm of the probabilities (log-likelihoods) to avoid underflow when multiplying many small probabilities. For Gaussian Naive Bayes, you can compute:
+    \[
+    \log P(x_i | y) = -\frac{1}{2} \log(2\pi \sigma_y^2) - \frac{(x_i - \mu_y)^2}{2\sigma_y^2}
+    \]
+    This approach helps in both improving numerical stability and handling very small or very large probability values more effectively.
+\end{itemize}
+
+\subsubsection*{2. Bernoulli Naive Bayes (for binary features):}
+
+In Bernoulli Naive Bayes, the features are binary (i.e., they can take values 0 or 1), and the likelihood of a feature given a class is modeled as a Bernoulli distribution:
+
+\[
+P(x_i | y) = p_i^{x_i} (1 - p_i)^{(1 - x_i)}
+\]
+
+Where \( p_i = P(x_i = 1 | y) \) is the probability of the feature being 1 for class \( y \).
+
+\textbf{Issue:}
+\begin{itemize}
+    \item \textit{Zero probabilities:} If any feature has zero probability (e.g., \( P(x_i = 1 | y) = 0 \) for some feature \( x_i \) in class \( y \)), the entire likelihood for that class will be zero, which can cause issues when computing the posterior.
+\end{itemize}
+
+\textbf{Solutions:}
+\begin{itemize}
+    \item \textit{Laplace smoothing:} Add a small constant (typically 1) to the numerator and adjust the denominator accordingly to avoid zero probabilities:
+    \[
+    P(x_i = 1 | y) = \frac{ \sum_{j} x_{ij} + 1}{N_y + 2}
+    \]
+    where \( \sum_{j} x_{ij} \) is the number of times feature \( x_i \) is 1 in class \( y \), and \( N_y \) is the total number of samples in class \( y \). This technique is known as \textbf{Laplace smoothing} or \textbf{additive smoothing}.
+    
+    \item \textit{Logarithmic transformation:} As with Gaussian Naive Bayes, using the logarithm of the probabilities can help with numeric stability. For Bernoulli Naive Bayes, you would compute:
+    \[
+    \log P(x_i | y) = x_i \log p_i + (1 - x_i) \log (1 - p_i)
+    \]
+    This avoids underflow when multiplying probabilities and helps manage very small or zero probabilities.
+\end{itemize}
+
+\subsubsection*{3. General Measures for Both Types of Naive Bayes:}
+
+\begin{itemize}
+    \item \textit{Avoid direct multiplication of probabilities:} Instead of multiplying the probabilities directly (which can lead to very small numbers), work with the logarithms of probabilities. Since logarithms turn products into sums, this is computationally more stable and avoids overflow or underflow problems.
+    
+    \item \textit{Use of floating-point precision:} Ensure that the computations are done with sufficient floating-point precision (e.g., using double precision instead of single precision) to avoid rounding errors that may exacerbate numeric instability.
+\end{itemize}
+
+\subsection*{Summary of Measures:}
+
+\textbf{1. Gaussian Naive Bayes:}
+\begin{itemize}
+    \item Add a small constant \( \epsilon \) to the variance to avoid very small values.
+    \item Use logarithms of the likelihoods to handle small numbers more effectively.
+\end{itemize}
+
+\textbf{2. Bernoulli Naive Bayes:}
+\begin{itemize}
+    \item Apply Laplace smoothing (additive smoothing) to avoid zero probabilities.
+    \item Use logarithms of the likelihoods to handle extreme values and avoid multiplication of zero probabilities.
+\end{itemize}
+
+By implementing these techniques, you can greatly reduce numeric instability and ensure that the Naive Bayes classifier performs reliably, even in challenging scenarios.
+
 
 \section{Q7.7 What is the difference between discriminative and (classical) generative models? [5]}
-TODO
+
+The key difference between \textbf{discriminative} and \textbf{generative} models lies in how they model the data and the task they aim to solve:
+
+Discriminative models focus on directly modeling the decision boundary between classes. They estimate the probability of the class given the data, \( P(y | x) \), where \( x \) is the input and \( y \) is the output. These models try to distinguish between different classes based on the features, without making assumptions about how the data is generated.
+
+\begin{itemize}
+    \item Example: \textbf{Logistic Regression}, \textbf{Support Vector Machines (SVMs)}, and \textbf{Neural Networks}.
+    \item They are typically more \textit{data-efficient} for classification tasks because they focus on the conditional probability.
+\end{itemize}
+
+Generative models, on the other hand, model how the data is generated by learning the joint probability \( P(x, y) \). They aim to understand the underlying distribution of the features \( x \) for each class \( y \), and then use Bayes' theorem to compute \( P(y | x) \). In other words, they model how the data looks within each class and can generate new samples.
+
+\begin{itemize}
+    \item Example: \textbf{Naive Bayes}, \textbf{Gaussian Mixture Models}, and \textbf{Hidden Markov Models}.
+    \item They are useful when you want to model the underlying data distribution, and they can be used for tasks like generating new data or handling missing data.
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Discriminative models} model \( P(y | x) \) directly (focused on classification).
+    \item \textbf{Generative models} model \( P(x, y) \) (focus on modeling the data generation process).
+\end{itemize}
 
 \part{Lecture 8}
 
@@ -1331,7 +1484,8 @@ This metric is utilized in machine learning to assess the consistency of annotat
 By quantifying the agreement level, Cohen's kappa allows for more informed decisions in the data curation process, ultimately leading to the development of more robust machine learning models.
 
 \section{Q8.7 Assuming you have collected data for classification by letting people annotate data instances. How do you estimate a reasonable range for classifier performance? [5]}
-TODO
+
+To estimate a reasonable range for classifier performance, you can use several methods. Cross-validation is a popular approach, where you split your data into $k$ subsets and train/test the model $k$ times, averaging the performance. Bootstrap sampling is another method that repeatedly samples data with replacement, training on one set and testing on the out-of-bag instances, which helps estimate the model’s variability. The holdout method involves splitting the data into a training and a test set, training on one and testing on the other, then repeating with different splits. You can calculate confidence intervals around your performance metric (like accuracy) from multiple runs to understand variability. Finally, examining bias-variance trade-offs with learning curves helps assess if your model is underfitting or overfitting, which can further refine your estimate of performance.
 
 \section{Q8.8 Considering an averaging ensemble of $M$ models, prove the relation between the average mean squared error of the ensemble and the average error of the individual models, assuming the model errors have zero means and are uncorrelated. Use a formula to explain what uncorrelated errors mean in this context. [20]}
 
@@ -1403,7 +1557,60 @@ During training, a leaf is split by selecting the feature and the threshold that
 The process continues recursively until a stopping criterion is met, which could be a maximum depth of the tree, a minimum number of samples in a leaf, or a minimal improvement to the criterion.
 
 \section{Q9.2 Explain the CART algorithm for constructing a decision tree. Explain the relationship between the loss function that is optimized during the decision tree construction and the splitting criterion that is during the node splitting. [10]}
-TODO
+
+In classification, the \textbf{CART} algorithm builds a decision tree by recursively splitting the dataset into subsets. At each node, the algorithm chooses the best feature and corresponding threshold to split the data into two groups. The goal is to make the classes in the resulting subsets as pure as possible.
+
+The objective is to minimize the \textbf{Gini impurity} at each node.
+
+The \textbf{Gini impurity} measures the "impurity" of a dataset. For a dataset \( D \) with \( C \) classes, it is defined as:
+\[
+Gini(D) = 1 - \sum_{i=1}^{C} p_i^2
+\]
+where:
+\begin{itemize}
+    \item \( p_i \) is the proportion of instances of class \( i \) in the dataset \( D \),
+    \item \( C \) is the number of classes.
+\end{itemize}
+
+The Gini impurity takes values between 0 (perfect purity) and 1 (maximum impurity). The lower the Gini impurity, the purer the node.
+
+\begin{enumerate}
+    \item \textbf{Starting at the Root Node:} 
+    The algorithm calculates the Gini impurity of the entire dataset at the root node.
+    
+    \item \textbf{Splitting:} 
+    The algorithm evaluates all possible splits based on different features and thresholds. For each possible split, the Gini impurity is computed for the resulting child nodes (two groups). The split that results in the lowest total Gini impurity across the child nodes is chosen.
+    
+    \item \textbf{Recursion:} 
+    The process repeats recursively for each child node. Each time, the algorithm selects the best feature and threshold that minimizes the Gini impurity.
+    
+    \item \textbf{Stopping Criteria:} 
+    The tree-building stops when a stopping criterion is met, such as a maximum depth, a minimum number of samples in a node, or when further splitting does not reduce the impurity significantly.
+\end{enumerate}
+
+The \textbf{loss function} in this context is related to the \textbf{Gini impurity}. The objective of the CART algorithm is to minimize the loss function at each step by choosing the split that leads to the lowest Gini impurity for the child nodes. This ensures that the data in each node becomes purer, meaning the class distribution in each node is as homogenous as possible.
+
+In simpler terms:
+\begin{itemize}
+    \item \textbf{Gini impurity} quantifies the "impurity" or mixedness of the classes at each node.
+    \item \textbf{Minimizing the Gini impurity} at each node results in a decision tree where the leaves are as pure as possible, leading to better classification performance.
+\end{itemize}
+
+This process is what allows the CART algorithm to construct a decision tree that is both effective and interpretable.
+
+Instead of Gini impurity, the \textbf{entropy criterion} can also be used, where the goal is to minimize the entropy at each node. The entropy criterion is defined as: 
+\[
+H(T) = -\sum_{k=1}^{K} p_T(k) \log p_T(k)
+\]
+where \( p_T(k) \) is the proportion of samples of class \( k \) in node \( T \).
+
+Also, for regression tasks, the \textbf{mean squared error (MSE)} can be used as the loss function to minimize the variance of the target variable at each node.
+MSE is defined as:
+\[
+\text{MSE}(T) = \frac{1}{|I_T|} \sum_{i \in I_T} (t_i - \bar{t}_T)^2
+\]
+where \( t_i \) is the target value of the \( i \)-th sample, \( \bar{t}_T \) is the average target value in node \( T \), and \( I_T \) is the set of indices of samples in node \( T \).
+
 
 \section{Q9.3 In a $K$-class classification decision tree, state what values are kept in internal nodes, define the Gini index and describe how is a node split during training (without discussing splitting constraints). [10]}
 
@@ -1532,10 +1739,61 @@ The random forest algorithm leverages the power of multiple decision trees to re
 \part{Lecture 10}
 
 \section{Q10.1 Explain the main differences between random forests and gradient-boosted decision trees. [5]}
-TODO
+
+Random forests and gradient-boosted decision trees (GBDT) are both ensemble learning methods that combine multiple decision trees, but they differ in how they build and combine these trees. In random forests, trees are built independently, with each tree trained on a random subset of the data and features, and their predictions are averaged (for regression) or voted on (for classification) to produce the final result. This approach reduces variance by averaging out errors from individual trees. In contrast, GBDT builds trees sequentially, where each new tree is trained to correct the errors (residuals) made by the previous trees. The predictions of all trees are combined through weighted sums, where the final result is more sensitive to recent corrections. GBDT often yields better predictive performance but is more prone to overfitting and computationally more expensive compared to random forests.
+
 
 \section{Q10.2 Explain the intuition for second-order optimization using Newton's root-finding method or Taylor expansions. [10]}
-TODO
+
+\subsection*{Second-Order Optimization using Newton's Method}
+
+Second-order optimization methods, such as \textbf{Newton's method}, leverage information from the \textbf{second derivative} (the Hessian matrix in the case of multivariate problems) to optimize a function. The intuition behind this approach is that it uses both the \textbf{gradient} (first derivative) and the \textbf{curvature} (second derivative) of the objective function to make more informed updates during optimization, which can lead to faster convergence compared to first-order methods like gradient descent.
+
+\subsubsection*{Newton’s Method}
+Newton's method for optimization uses a \textbf{second-order Taylor expansion} around the current point \( x_k \) to approximate the objective function \( f(x) \):
+
+\[
+f(x) \approx f(x_k) + \nabla f(x_k)^\top (x - x_k) + \frac{1}{2}(x - x_k)^\top H(x_k) (x - x_k)
+\]
+
+where:
+\begin{itemize}
+    \item \( f(x) \) is the objective function,
+    \item \( \nabla f(x_k) \) is the gradient of the function at \( x_k \),
+    \item \( H(x_k) \) is the Hessian matrix (second derivative) of \( f(x) \) at \( x_k \).
+\end{itemize}
+
+The first term is the function value at the current point, the second term represents the linear approximation of the function using the gradient, and the third term captures the curvature of the function using the Hessian.
+
+\subsubsection*{Intuition Behind Second-Order Optimization}
+\begin{itemize}
+    \item \textbf{Gradient (First-Order Information):} The gradient gives the direction of steepest ascent or descent in the function. It tells you how the function changes as you move in each direction but doesn’t provide information about the shape of the function.
+    \item \textbf{Hessian (Second-Order Information):} The Hessian matrix provides information about the curvature of the function. It tells you whether the function is concave up (positive curvature) or concave down (negative curvature) in various directions. A large value in the Hessian suggests that the function is steep in that direction, and a small value suggests a flatter region.
+    \item \textbf{Using Both Gradients and Curvature:} In Newton’s method, you use both the gradient and the Hessian to update your position in a way that accounts for the steepness and curvature of the function. If the Hessian indicates that the function is steep, the update step is smaller (so as not to overshoot). If the Hessian indicates that the function is relatively flat, the update step is larger.
+\end{itemize}
+
+\subsubsection*{Update Rule}
+The update step in Newton's method is given by:
+
+\[
+x_{k+1} = x_k - H(x_k)^{-1} \nabla f(x_k)
+\]
+
+where:
+\begin{itemize}
+    \item \( H(x_k)^{-1} \) is the inverse of the Hessian matrix,
+    \item \( \nabla f(x_k) \) is the gradient at the current point \( x_k \).
+\end{itemize}
+
+By using the second-order information, Newton’s method often converges more quickly than gradient descent, especially near the optimum, because it takes into account both the slope and the curvature of the objective function.
+
+\subsubsection*{In Practice}
+\begin{itemize}
+    \item \textbf{Faster Convergence:} Second-order methods like Newton’s method can converge more quickly than first-order methods, especially when the objective function has well-behaved curvature.
+    \item \textbf{Computational Complexity:} However, the main drawback is that computing the Hessian matrix and its inverse can be computationally expensive, especially for high-dimensional problems. Thus, while the method is more efficient in terms of the number of iterations needed to converge, it may not always be feasible for very large-scale problems.
+\end{itemize}
+
+In summary, second-order optimization, through methods like Newton’s, improves upon first-order methods by using not just the gradient but also the curvature of the objective function, leading to more informed and typically faster updates, especially when the objective function behaves well near the optimum.
 
 \section{Q10.3 Write down the loss function that we optimize in gradient-boosted decision trees while constructing $t$ tree. Then, define $g_i$ and $h_i$ and show the value $w_{\tau}$ of optimal prediction in node $\tau$ and the criterion used during node splitting. [20]}
 
@@ -1714,7 +1972,11 @@ Given a data matrix \( X \), the PCA of dimension \( M \) can be computed using 
 This algorithm computes the top \( M \) principal components by iteratively finding the direction of maximum variance (eigenvector) and deflating the covariance matrix to remove this variance before finding the next component.
 
 \section{Q11.5 List at least two applications of SVD or PCA. [5]}
-TODO
+
+
+Singular Value Decomposition (SVD) and Principal Component Analysis (PCA) are widely used in various applications. One common application is image compression, where SVD or PCA is used to reduce the dimensionality of image data by retaining only the most significant components, effectively reducing storage requirements without sacrificing much image quality. Another application is topic modeling in natural language processing (NLP), where PCA or SVD is applied to text data, such as in Latent Semantic Analysis (LSA), to extract underlying patterns in word usage and identify the most important topics in a corpus of documents. These techniques are essential for simplifying complex data and uncovering hidden structures in a wide range of domains.
+
+Also, PCA is often used in data visualization to reduce high-dimensional data to 2 or 3 dimensions for plotting, allowing for better visualization of the data distribution and relationships between data points.
 
 \section{Q11.6 Describe the K-means algorithm, including the kmeans++ initialization. What is it used for? What is the loss function that the algorithm optimizes? What can you say about the algorithm convergence? [20]}
 
@@ -1753,7 +2015,22 @@ Our objective function \( J \), which we aim to minimize, is
 The K-means++ initialization helps to ensure that the initial centroids are as far from each other as possible, leading to better and faster convergence of the algorithm.
 
 \section{Q11.7 Name at least two clustering algorithms. What is their main principle? How do they differ? [10]}
-TODO
+\textbf{K-means Clustering}:
+
+Approach: Partitional clustering algorithm that divides data into $k$ clusters by minimizing the variance within each cluster.
+How it works: The algorithm iteratively assigns points to the nearest cluster center (centroid) and updates the centroid based on the mean of points in each cluster. This process is repeated until convergence.
+Advantages: Simple, fast, and efficient for large datasets with well-separated spherical clusters.
+Disadvantages: Requires specifying the number of clusters $k$ in advance, sensitive to initial centroid placement, and struggles with non-spherical or overlapping clusters.
+
+\textbf{Hierarchical Clustering}:
+
+Approach: Builds a hierarchy of clusters either in a bottom-up (agglomerative) or top-down (divisive) manner.
+How it works: In agglomerative hierarchical clustering, each data point starts as its own cluster, and pairs of clusters are merged based on a distance metric until all points are in a single cluster. In divisive clustering, all points start in one cluster, and the algorithm recursively splits them.
+Advantages: Does not require pre-specifying the number of clusters, can produce a dendrogram to visualize the relationships between clusters.
+Disadvantages: Computationally expensive, particularly for large datasets, and sensitive to noise and outliers.
+
+K-means is efficient and works well for spherical clusters with a known number of clusters but struggles with complex data structures.
+Hierarchical clustering produces a detailed tree-like structure of clusters and doesn't require the number of clusters to be defined in advance, but it can be slow for large datasets.
 
 \part{Lecture 12}
 
@@ -1994,10 +2271,12 @@ Both approaches have their merits and challenges when applied to ML ethics. Deon
   \end{enumerate}
 
 \section{Q13.4 List at least one example of an ethical problem that can originate in model design or model development. [5]}
-TODO
+
+One ethical problem that can arise in model design or development is bias and discrimination in predictive models. For example, if a machine learning model is trained on biased historical data, it may perpetuate or even exacerbate existing inequalities. In hiring algorithms, if the training data reflects gender or racial biases, the model might unfairly favor certain demographic groups over others. This can lead to discriminatory practices, such as hiring or lending decisions that disadvantage certain groups, violating principles of fairness and equality. Ensuring fairness and mitigating bias in model design is crucial to avoid these ethical issues.
 
 \section{Q13.5 Under what circumstances could train-test mismatch be an ethical problem? [5]}
-TODO
+
+Train-test mismatch can become an ethical problem when a model is trained on data that doesn't accurately represent the population it will be applied to, leading to unfair or harmful outcomes. For instance, if a model is trained on data from one demographic group (e.g., based on gender, age, or ethnicity) but then tested or deployed on a broader or different group, it may fail to generalize well, leading to biased predictions. This can result in unjust decisions, such as in healthcare or criminal justice, where individuals from underrepresented groups are unfairly treated or disadvantaged because the model doesn’t account for their specific characteristics. In such cases, the mismatch between training and testing data can reinforce existing inequalities, causing harm to individuals who are misrepresented or overlooked by the model, and raising significant ethical concerns regarding fairness, accountability, and transparency.
 
 \part{The End}
 
